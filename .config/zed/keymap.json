@@ -1,0 +1,7 @@
+[
+  {
+    "bindings": {
+      "alt-b": "workspace::ToggleLeftDock"
+    }
+  }
+]
