@@ -11,6 +11,12 @@ fi
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 
+EDITOR='nvim'
+
+# fzf
+source <(fzf --zsh)
+alias fvim='nvim $(fzf -m --preview="bat --color=always {}")'
+
 # Load Angular CLI autocompletion.
 #source <(ng completion script)
 export PATH="/usr/local/opt/pnpm@8/bin:$PATH"
@@ -36,3 +42,5 @@ alias lzd='lazydocker'
 
 # colima
 alias docker-start='colima start --mount-type 9p'
+
+# fzf
