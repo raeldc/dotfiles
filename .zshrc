@@ -43,4 +43,4 @@ alias lzd='lazydocker'
 # colima
 alias docker-start='colima start --mount-type 9p'
 
-# fzf
+eval "$(zoxide init --cmd cd zsh)"

@@ -1,0 +1,5 @@
+.tmp*
+lock.mdb
+.config/zed/*
+!.config/zed/themes
+!.config/zed/*.json
