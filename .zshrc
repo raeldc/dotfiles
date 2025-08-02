@@ -44,3 +44,5 @@ alias lzd='lazydocker'
 alias docker-start='colima start --mount-type 9p'
 
 eval "$(zoxide init --cmd cd zsh)"
+
+. "$HOME/.local/bin/env"
