@@ -7,12 +7,10 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "agent": {
-    "always_allow_tool_actions": true,
-    "play_sound_when_agent_done": true,
+  "assistant": {
     "default_model": {
-      "provider": "openai",
-      "model": "o3-mini"
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet-thinking-latest"
     },
     "version": "2"
   },
