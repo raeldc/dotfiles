@@ -7,10 +7,19 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "assistant": {
+  "ssh_connections": [
+    {
+      "host": "devbox",
+      "username": "rael",
+      "projects": []
+    }
+  ],
+  "agent": {
+    "always_allow_tool_actions": true,
+    "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "anthropic",
-      "model": "claude-3-7-sonnet-thinking-latest"
+      "provider": "openai",
+      "model": "o3-mini"
     },
     "version": "2"
   },

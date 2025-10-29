@@ -7,14 +7,31 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "ssh_connections": [
+    {
+      "host": "devbox",
+      "username": "rael",
+      "projects": [
+        {
+          "paths": ["/home/rael"]
+        },
+        {
+          "paths": ["/home/rael/projects/main"]
+        }
+      ]
+    }
+  ],
   "agent": {
+    "inline_assistant_model": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-latest"
+    },
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
     "default_model": {
       "provider": "openai",
       "model": "o3-mini"
-    },
-    "version": "2"
+    }
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
@@ -23,5 +40,6 @@
   "buffer_font_size": 14,
   "vim": {
     "toggle_relative_line_numbers": true
-  }
+  },
+  "format_on_save": "off"
 }

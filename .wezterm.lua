@@ -1,6 +1,8 @@
 -- Pull in the wezterm API
 local wezterm = require("wezterm")
 
+local act = wezterm.action
+
 -- This will hold the configuration.
 local config = wezterm.config_builder()
 
@@ -26,6 +28,44 @@ config.enable_tab_bar = false
 config.window_decorations = "RESIZE"
 config.window_background_opacity = 0.9
 config.macos_window_background_blur = 8
+
+config.inactive_pane_hsb = {
+  saturation = 0.9,
+  brightness = 0.5,
+}
+
+config.keys = {
+  {
+    key = 'h',
+    mods = 'ALT',
+    action = act.ActivatePaneDirection 'Left'
+  },
+  {
+    key = 'j',
+    mods = 'ALT',
+    action = act.ActivatePaneDirection 'Down'
+  },
+  {
+    key = 'k',
+    mods = 'ALT',
+    action = act.ActivatePaneDirection 'Up'
+  },
+  {
+    key = 'l',
+    mods = 'ALT',
+    action = act.ActivatePaneDirection 'Right'
+  },
+  {
+    key = '[',
+    mods = 'ALT',
+    action = act.ActivateTabRelative(-1)
+  },
+  {
+    key = ']',
+    mods = 'ALT',
+    action = act.ActivateTabRelative(1)
+  }
+}
 
 -- and finally, return the configuration to wezterm
 return config

@@ -48,3 +48,14 @@ eval "$(zoxide init --cmd cd zsh)"
 . "$HOME/.local/bin/env"
 
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+
+# pnpm
+export PNPM_HOME="/Users/rael/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
