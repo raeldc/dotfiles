@@ -3,5 +3,29 @@
     "bindings": {
       "alt-b": "workspace::ToggleLeftDock"
     }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "cmd-s": ["workspace::SendKeystrokes", "escape cmd-s"]
+    }
+  },
+  {
+    "context": "ProjectPanel",
+    "bindings": {
+      "space l": "editor::ToggleFocus"
+    }
+  },
+  {
+    "context": "vim_mode == insert",
+    "bindings": {
+      "ctrl-/": "editor::ShowEditPrediction"
+    }
+  },
+  {
+    "context": "!ContextEditor > (Editor && mode == full)",
+    "bindings": {
+      "alt-shift-b": "pane::RevealInProjectPanel"
+    }
   }
 ]
