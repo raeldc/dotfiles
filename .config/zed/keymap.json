@@ -27,5 +27,10 @@
     "bindings": {
       "alt-shift-b": "pane::RevealInProjectPanel"
     }
+  },
+  {
+    "bindings": {
+      "ctrl-shift-z": "workspace::ToggleZoom"
+    }
   }
 ]
