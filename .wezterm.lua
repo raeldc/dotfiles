@@ -34,12 +34,11 @@ config.inactive_pane_hsb = {
   brightness = 0.5,
 }
 
-config.keys = {
-  {
+config.keys = {{
     key = 'h',
     mods = 'ALT',
-    action = act.ActivatePaneDirection 'Left'
-  },
+    action = act.ActivatePaneDirection 'Left',
+  {key="Enter", mods="SHIFT", action=wezterm.action{SendString="\x1b\r"}},},
   {
     key = 'j',
     mods = 'ALT',
