@@ -38,7 +38,7 @@
   ],
   "agent": {
     "dock": "right",
-    "default_profile": "write",
+    "default_profile": "ask",
     "profiles": {
       "cautious": {
         "name": "Cautious",
