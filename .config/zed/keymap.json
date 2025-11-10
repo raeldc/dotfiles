@@ -32,5 +32,69 @@
     "bindings": {
       "ctrl-shift-z": "workspace::ToggleZoom"
     }
+  },
+  {
+    "context": "(ProjectPanel && not_editing)",
+    "bindings": {
+      "a": "project_panel::NewFile"
+    }
+  },
+  {
+    "context": "(ProjectPanel && not_editing)",
+    "bindings": {
+      "shift-a": "project_panel::NewDirectory"
+    }
+  },
+  {
+    "context": "(ProjectPanel && not_editing)",
+    "bindings": {
+      "escape d": "project_panel::Delete"
+    }
+  },
+  {
+    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "bindings": {
+      "alt-]": "pane::ActivateNextItem"
+    }
+  },
+  {
+    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "bindings": {
+      "alt-[": "pane::ActivatePreviousItem"
+    }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "alt-{": "pane::SwapItemLeft"
+    }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "alt-}": "pane::SwapItemRight"
+    }
+  },
+  {
+    "bindings": {
+      "escape shift-l": "pane::SplitAndMoveRight"
+    }
+  },
+  {
+    "bindings": {
+      "escape shift-j": "pane::SplitAndMoveDown"
+    }
+  },
+  {
+    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "bindings": {
+      "alt-l": "workspace::ActivatePaneRight"
+    }
+  },
+  {
+    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "bindings": {
+      "alt-h": "workspace::ActivatePaneLeft"
+    }
   }
 ]
