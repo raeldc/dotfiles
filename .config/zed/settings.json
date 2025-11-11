@@ -16,7 +16,7 @@
   },
   "show_completion_documentation": false,
   "show_completions_on_input": false,
-  "icon_theme": "JetBrains New UI Icons (Dark)",
+  "icon_theme": "Bearded Icon Theme",
   "languages": {
     "Go": {
       "format_on_save": "on"
