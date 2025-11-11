@@ -1,100 +1,328 @@
 [
+  // jk to escape insert mode
   {
+    "context": "Editor && vim_mode == insert && !menu",
     "bindings": {
-      "alt-b": "workspace::ToggleLeftDock"
+      "j k": "vim::NormalBefore"
     }
   },
+
+  // Alt+z to toggle fold (matching nvim's Alt+z for za)
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "alt-z": "editor::ToggleFold"
+    }
+  },
+
+  // Clear search highlights with Escape
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "escape": "editor::Cancel"
+    }
+  },
+
+  // ============================================================================
+  // FILE OPERATIONS & FORMATTING
+  // ============================================================================
+
+  // Save file (escape to normal mode first)
   {
     "context": "Editor",
     "bindings": {
       "cmd-s": ["workspace::SendKeystrokes", "escape cmd-s"]
     }
   },
+
+  // Leader fm to format file
   {
-    "context": "ProjectPanel",
+    "context": "Editor && vim_mode == normal",
     "bindings": {
-      "space l": "editor::ToggleFocus"
+      "space f m": "editor::Format"
+    }
+  },
+
+  // ============================================================================
+  // FUZZY FINDING & SEARCH (Telescope equivalents)
+  // ============================================================================
+
+  // Alt+p for file finder
+  {
+    "context": "Workspace",
+    "bindings": {
+      "alt-p": "file_finder::Toggle"
+    }
+  },
+
+  // Alt+Shift+P for buffer/tab switcher
+  {
+    "context": "Workspace",
+    "bindings": {
+      "alt-shift-p": "tab_switcher::Toggle"
+    }
+  },
+
+  // Leader ff for file finder
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space f f": "file_finder::Toggle"
+    }
+  },
+
+  // Leader fw for project-wide search (live grep)
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space f w": "pane::DeploySearch"
+    }
+  },
+
+  // Leader fb for buffer list
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space f b": "tab_switcher::Toggle"
+    }
+  },
+
+  // Leader fz for search in current buffer
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space f z": "buffer_search::Deploy"
+    }
+  },
+
+  // Leader fo for recent files (oldfiles)
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space f o": "projects::OpenRecent"
+    }
+  },
+
+  // ============================================================================
+  // BUFFER/TAB NAVIGATION
+  // ============================================================================
+
+  // Tab/Shift-Tab for next/previous buffer (alternative to alt-[/])
+  {
+    "context": "Workspace",
+    "bindings": {
+      "tab": "pane::ActivateNextItem",
+      "shift-tab": "pane::ActivatePreviousItem"
+    }
+  },
+
+  // Alt+[ and Alt+] for previous/next item (existing)
+  {
+    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "bindings": {
+      "alt-]": "pane::ActivateNextItem",
+      "alt-[": "pane::ActivatePreviousItem"
+    }
+  },
+
+  {
+    "context": "Editor && !Terminal && vim_mode == insert",
+    "bindings": {
+      "alt-]": "pane::ActivateNextItem",
+      "alt-[": "pane::ActivatePreviousItem"
+    }
+  },
+
+
+  // Alt+{ and Alt+} to swap items left/right (existing)
+  {
+    "context": "Pane",
+    "bindings": {
+      "alt-{": "pane::SwapItemLeft",
+      "alt-}": "pane::SwapItemRight"
+    }
+  },
+
+  // Leader x to close buffer
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space x": "pane::CloseActiveItem"
     }
   },
   {
-    "context": "vim_mode == insert",
+    "context": "Editor",
     "bindings": {
-      "ctrl-/": "editor::ShowEditPrediction"
+      "alt-w l": ["pane::CloseItemsToTheRight", {"close_pinned": false }],
+      "alt-w h": ["pane::CloseItemsToTheLeft", {"close_pinned": false }],
+      "alt-w a": ["pane::CloseAllItems", {"close_pinned": false }]
     }
   },
+
+  // ============================================================================
+  // PANE NAVIGATION & SPLITS
+  // ============================================================================
+
+  // Alt+h and Alt+l for left/right pane navigation (existing)
+  {
+    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "bindings": {
+      "alt-h": "workspace::ActivatePaneLeft",
+      "alt-l": "workspace::ActivatePaneRight"
+    }
+  },
+
+  // Escape Shift+L/J for split and move (existing)
+  {
+    "bindings": {
+      "escape shift-l": "pane::SplitAndMoveRight",
+      "escape shift-j": "pane::SplitAndMoveDown"
+    }
+  },
+
+  // Leader l to focus next pane (when not in ProjectPanel)
+  {
+    "context": "Editor && vim_mode == normal",
+    "bindings": {
+      "space l": "workspace::ActivateNextPane"
+    }
+  },
+
+  // ============================================================================
+  // SIDEBAR / FILE TREE
+  // ============================================================================
+
+  // Alt+b to toggle left dock/sidebar
+  {
+    "bindings": {
+      "alt-b": "workspace::ToggleLeftDock"
+    }
+  },
+
+  // Alt+Shift+B to reveal current file in project panel
   {
     "context": "!ContextEditor > (Editor && mode == full)",
     "bindings": {
       "alt-shift-b": "pane::RevealInProjectPanel"
     }
   },
+
+  // Space l in ProjectPanel to toggle focus back to editor
   {
+    "context": "ProjectPanel",
     "bindings": {
-      "ctrl-shift-z": "workspace::ToggleZoom"
+      "space l": "editor::ToggleFocus"
     }
   },
+
+  // ProjectPanel: 'a' to create new file
   {
     "context": "(ProjectPanel && not_editing)",
     "bindings": {
       "a": "project_panel::NewFile"
     }
   },
+
+  // ProjectPanel: Shift+A to create new directory
   {
     "context": "(ProjectPanel && not_editing)",
     "bindings": {
       "shift-a": "project_panel::NewDirectory"
     }
   },
+
+  // ProjectPanel: Escape d to delete
   {
     "context": "(ProjectPanel && not_editing)",
     "bindings": {
       "escape d": "project_panel::Delete"
     }
   },
+
+  // ============================================================================
+  // LINE NUMBERS & DISPLAY
+  // ============================================================================
+
+  // Leader n to toggle line numbers
   {
-    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "context": "Editor && vim_mode == normal",
     "bindings": {
-      "alt-]": "pane::ActivateNextItem"
+      "space n": "editor::ToggleLineNumbers"
     }
   },
+
+  // Leader rn to toggle relative numbers
   {
-    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "context": "Editor && vim_mode == normal",
     "bindings": {
-      "alt-[": "pane::ActivatePreviousItem"
+      "space r n": "editor::ToggleRelativeLineNumbers"
     }
   },
+
+  // ============================================================================
+  // COMMENTS
+  // ============================================================================
+
+  // Leader / for toggle comment (normal mode)
   {
-    "context": "Pane",
+    "context": "Editor && vim_mode == normal",
     "bindings": {
-      "alt-{": "pane::SwapItemLeft"
+      "space /": "editor::ToggleComments"
     }
   },
+
+  // Leader / for toggle comment (visual mode)
   {
-    "context": "Pane",
+    "context": "Editor && vim_mode == visual",
     "bindings": {
-      "alt-}": "pane::SwapItemRight"
+      "space /": "editor::ToggleComments"
     }
   },
+
+  // ============================================================================
+  // LSP / DIAGNOSTICS
+  // ============================================================================
+
+  // Leader ds for diagnostics
   {
+    "context": "Editor && vim_mode == normal",
     "bindings": {
-      "escape shift-l": "pane::SplitAndMoveRight"
+      "space d s": "diagnostics::Deploy"
     }
   },
+
+  // ============================================================================
+  // GIT
+  // ============================================================================
+
+  // Leader gt to toggle git blame
   {
+    "context": "Editor && vim_mode == normal",
     "bindings": {
-      "escape shift-j": "pane::SplitAndMoveDown"
+      "space g t": "git::Blame"
     }
   },
+
+  // ============================================================================
+  // AI / EDIT PREDICTIONS
+  // ============================================================================
+
+  // Ctrl+/ to show edit prediction in insert mode
   {
-    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
+    "context": "vim_mode == insert",
     "bindings": {
-      "alt-l": "workspace::ActivatePaneRight"
+      "ctrl-/": "editor::ShowEditPrediction"
     }
   },
+
+  // ============================================================================
+  // WINDOW MANAGEMENT
+  // ============================================================================
+
+  // Ctrl+Shift+Z to toggle zoom
   {
-    "context": "((VimControl && !menu) || (!Editor && !Terminal))",
     "bindings": {
-      "alt-h": "workspace::ActivatePaneLeft"
+      "ctrl-shift-z": "workspace::ToggleZoom"
     }
   }
 ]
