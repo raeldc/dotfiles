@@ -3,7 +3,10 @@
   {
     "context": "Editor && vim_mode == insert && !menu",
     "bindings": {
-      "j k": "vim::NormalBefore"
+      "j k": "vim::NormalBefore",
+      "j j": "vim::NormalBefore",
+      "k k": "vim::NormalBefore",
+      "u u": "vim::NormalBefore"
     }
   },
 
@@ -175,8 +178,8 @@
   // Escape Shift+L/J for split and move (existing)
   {
     "bindings": {
-      "escape shift-l": "pane::SplitAndMoveRight",
-      "escape shift-j": "pane::SplitAndMoveDown"
+      "space shift-l": "pane::SplitAndMoveRight",
+      "space shift-j": "pane::SplitAndMoveDown"
     }
   },
 
@@ -235,7 +238,7 @@
   {
     "context": "(ProjectPanel && not_editing)",
     "bindings": {
-      "escape d": "project_panel::Delete"
+      "x": "project_panel::Delete"
     }
   },
 
