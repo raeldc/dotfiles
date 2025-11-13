@@ -7,6 +7,20 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "context_servers": {
+    "mcp-server-nextjs": {
+      "source": "custom",
+      "enabled": false,
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "shadcn-mcp-server": {
+      "source": "custom",
+      "enabled": false,
+      "command": "pnpx",
+      "args": ["shadcn@latest", "mcp"]
+    }
+  },
   "edit_predictions": {
     "mode": "subtle"
   },
@@ -55,7 +69,7 @@
     "play_sound_when_agent_done": true,
     "default_model": {
       "provider": "anthropic",
-      "model": "claude-sonnet-4-5-latest"
+      "model": "claude-3-7-sonnet-latest"
     }
   },
   "base_keymap": "VSCode",
@@ -66,5 +80,8 @@
   "vim": {
     "toggle_relative_line_numbers": true
   },
-  "format_on_save": "off"
+  "format_on_save": "off",
+  "features": {
+    "edit_prediction_provider": "zed"
+  }
 }
