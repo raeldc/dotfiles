@@ -1,0 +1,176 @@
+{
+    // ============================================================================
+    // VIM MODE CONFIGURATION (matching Zed)
+    // ============================================================================
+    "vim.useSystemClipboard": true,
+    "vim.hlsearch": true,
+    "vim.leader": "<space>",
+    "vim.handleKeys": {
+        "<C-d>": true,
+        "<C-s>": false,
+        "<C-z>": false
+    },
+    "vim.useCtrlKeys": true,
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "k"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["j", "j"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["k", "k"],
+            "after": ["<Esc>"]
+        },
+        {
+            "before": ["u", "u"],
+            "after": ["<Esc>"]
+        }
+    ],
+    "vim.normalModeKeyBindingsNonRecursive": [
+        {
+            "before": ["<Esc>"],
+            "commands": [":nohl"]
+        }
+    ],
+
+    // ============================================================================
+    // EDITOR APPEARANCE (matching Zed theme and layout)
+    // ============================================================================
+    "workbench.colorTheme": "Base16 Dark Ayu Dark",
+    "editor.fontSize": 14,
+    "editor.fontFamily": "DroidSansM Nerd Font Mono, Menlo, Monaco, 'Courier New', monospace",
+    "editor.lineNumbers": "relative",
+    "editor.cursorBlinking": "solid",
+    "editor.cursorSurroundingLines": 8,
+    "editor.scrollBeyondLastLine": false,
+    "editor.minimap.enabled": false,
+    "editor.renderWhitespace": "none",
+    "editor.guides.indentation": true,
+
+    // ============================================================================
+    // EDITOR BEHAVIOR
+    // ============================================================================
+    "editor.formatOnSave": false,
+    "editor.inlineSuggest.enabled": true,
+    "editor.accessibilitySupport": "off",
+    "editor.wordWrap": "off",
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": false
+    },
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.tabCompletion": "on",
+    "files.autoSave": "off",
+
+    // ============================================================================
+    // WORKBENCH APPEARANCE
+    // ============================================================================
+    "window.zoomLevel": 0,
+    "workbench.activityBar.location": "top",
+    "workbench.sideBar.location": "left",
+    "workbench.statusBar.visible": true,
+    "workbench.editor.showTabs": "multiple",
+    "workbench.editor.tabCloseButton": "right",
+    "breadcrumbs.enabled": true,
+
+    // ============================================================================
+    // TERMINAL CONFIGURATION
+    // ============================================================================
+    "terminal.external.osxExec": "iTerm.app",
+    "terminal.integrated.fontSize": 13,
+    "terminal.integrated.fontFamily": "DroidSansM Nerd Font Mono",
+
+    // ============================================================================
+    // GIT CONFIGURATION
+    // ============================================================================
+    "git.autofetch": true,
+    "git.openRepositoryInParentFolders": "never",
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+
+    // ============================================================================
+    // EXPLORER CONFIGURATION
+    // ============================================================================
+    "explorer.confirmDelete": false,
+    "explorer.confirmDragAndDrop": false,
+    "explorer.compactFolders": false,
+
+    // ============================================================================
+    // SECURITY & TRUST
+    // ============================================================================
+    "security.workspace.trust.untrustedFiles": "open",
+
+    // ============================================================================
+    // LANGUAGE-SPECIFIC SETTINGS
+    // ============================================================================
+    "[javascript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.formatOnSave": false
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features",
+        "editor.formatOnSave": false
+    },
+    "[rust]": {
+        "editor.defaultFormatter": "rust-lang.rust-analyzer",
+        "editor.formatOnSave": true
+    },
+    "[go]": {
+        "editor.formatOnSave": true
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.formatOnSave": false
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.formatOnSave": false
+    },
+
+    // ============================================================================
+    // RUST ANALYZER CONFIGURATION
+    // ============================================================================
+    "rust-analyzer.linkedProjects": [
+        "Cargo.toml"
+    ],
+    "rust-analyzer.checkOnSave": true,
+    "rust-analyzer.check.command": "clippy",
+    "rust-analyzer.rustfmt.overrideCommand": [
+        "rustfmt"
+    ],
+    "rust-analyzer.cargo.buildScripts.overrideCommand": null,
+    "rust-analyzer.cargo.sysroot": null,
+    "rust-analyzer.checkOnSave.extraEnv": {},
+    "rust-analyzer.runnables.extraEnv": null,
+
+    // ============================================================================
+    // REMOTE SSH CONFIGURATION
+    // ============================================================================
+    "remote.SSH.defaultExtensions": [
+        "gitpod.gitpod-remote-ssh"
+    ],
+    "remote.SSH.remotePlatform": {
+        "*.gitpod.io": "linux"
+    },
+
+    // ============================================================================
+    // EXTENSION SETTINGS
+    // ============================================================================
+    "npm.keybindingsChangedWarningShown": true,
+    "application.shellEnvironmentResolutionTimeout": 100,
+    "redhat.telemetry.enabled": true,
+    "tabnine.experimentalAutoImports": true,
+    "tabnine.codeLensEnabled": false,
+    "protolint.path": "",
+    "extensions.experimental.affinity": {
+        "asvetliakov.vscode-neovim": 1
+    },
+    "database-client.autoSync": true,
+    "makefile.configureOnOpen": false,
+    "workbench.editor.tabActionLocation": "right"
+}

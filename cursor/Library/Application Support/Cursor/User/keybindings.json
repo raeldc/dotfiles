@@ -1,0 +1,400 @@
+// Cursor keybindings matching Zed configuration
+[
+    // ============================================================================
+    // AI / COMPOSER
+    // ============================================================================
+    {
+        "key": "cmd+i",
+        "command": "composerMode.agent"
+    },
+
+    // ============================================================================
+    // VIM MODE ESCAPE BINDINGS
+    // ============================================================================
+    {
+        "key": "j",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
+    },
+    {
+        "key": "k",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && vim.waitingForJK && !inDebugRepl && !suggestWidgetVisible"
+    },
+    {
+        "key": "u",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && vim.waitingForUU && !inDebugRepl && !suggestWidgetVisible"
+    },
+
+    // ============================================================================
+    // FILE OPERATIONS & FORMATTING
+    // ============================================================================
+
+    // Save file (Cmd+S should work in all modes)
+    {
+        "key": "cmd+s",
+        "command": "workbench.action.files.save"
+    },
+
+    // Leader fm to format file
+    {
+        "key": "space f m",
+        "command": "editor.action.formatDocument",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+
+    // ============================================================================
+    // FUZZY FINDING & SEARCH (Telescope equivalents)
+    // ============================================================================
+
+    // Alt+p for file finder
+    {
+        "key": "alt+p",
+        "command": "workbench.action.quickOpen"
+    },
+
+    // Alt+Shift+P for buffer/tab switcher
+    {
+        "key": "alt+shift+p",
+        "command": "workbench.action.showAllEditors"
+    },
+
+    // Leader ff for file finder
+    {
+        "key": "space f f",
+        "command": "workbench.action.quickOpen",
+        "when": "vim.mode == 'Normal' && !inDebugRepl"
+    },
+
+    // Leader fw for project-wide search (live grep)
+    {
+        "key": "space f w",
+        "command": "workbench.action.findInFiles",
+        "when": "vim.mode == 'Normal' && !inDebugRepl"
+    },
+
+    // Leader fb for buffer list
+    {
+        "key": "space f b",
+        "command": "workbench.action.showAllEditors",
+        "when": "vim.mode == 'Normal' && !inDebugRepl"
+    },
+
+    // Leader fz for search in current buffer
+    {
+        "key": "space f z",
+        "command": "actions.find",
+        "when": "vim.mode == 'Normal' && !inDebugRepl"
+    },
+
+    // Leader fo for recent files (oldfiles)
+    {
+        "key": "space f o",
+        "command": "workbench.action.openRecent",
+        "when": "vim.mode == 'Normal' && !inDebugRepl"
+    },
+
+    // ============================================================================
+    // BUFFER/TAB NAVIGATION
+    // ============================================================================
+
+    // Alt+[ and Alt+] for previous/next tab
+    {
+        "key": "alt+]",
+        "command": "workbench.action.nextEditor"
+    },
+    {
+        "key": "alt+[",
+        "command": "workbench.action.previousEditor"
+    },
+
+    // Alt+{ and Alt+} to move tabs left/right
+    {
+        "key": "alt+shift+]",
+        "command": "workbench.action.moveEditorRightInGroup"
+    },
+    {
+        "key": "alt+shift+[",
+        "command": "workbench.action.moveEditorLeftInGroup"
+    },
+
+    // Leader x to close buffer
+    {
+        "key": "space x",
+        "command": "workbench.action.closeActiveEditor",
+        "when": "vim.mode == 'Normal' && !inDebugRepl"
+    },
+
+    // Alt+w l to close items to the right
+    {
+        "key": "alt+w l",
+        "command": "workbench.action.closeEditorsToTheRight"
+    },
+
+    // Alt+w h to close items to the left
+    {
+        "key": "alt+w h",
+        "command": "workbench.action.closeEditorsToTheLeft"
+    },
+
+    // Alt+w a to close all editors
+    {
+        "key": "alt+w a",
+        "command": "workbench.action.closeAllEditors"
+    },
+
+    // ============================================================================
+    // PANE NAVIGATION & SPLITS
+    // ============================================================================
+
+    // Alt+h and Alt+l for left/right pane navigation
+    {
+        "key": "alt+h",
+        "command": "workbench.action.navigateLeft"
+    },
+    {
+        "key": "alt+l",
+        "command": "workbench.action.navigateRight"
+    },
+    {
+        "key": "alt+j",
+        "command": "workbench.action.navigateDown"
+    },
+    {
+        "key": "alt+k",
+        "command": "workbench.action.navigateUp"
+    },
+
+    // Space Shift+L/J for split and move
+    {
+        "key": "space shift+l",
+        "command": "workbench.action.moveEditorToRightGroup",
+        "when": "vim.mode == 'Normal'"
+    },
+    {
+        "key": "space shift+j",
+        "command": "workbench.action.moveEditorToBelowGroup",
+        "when": "vim.mode == 'Normal'"
+    },
+
+    // Leader l to focus next editor group
+    {
+        "key": "space l",
+        "command": "workbench.action.focusNextGroup",
+        "when": "vim.mode == 'Normal' && !inDebugRepl && !sideBarFocus"
+    },
+
+    // ============================================================================
+    // SIDEBAR / FILE TREE
+    // ============================================================================
+
+    // Alt+b to toggle sidebar
+    {
+        "key": "alt+b",
+        "command": "workbench.action.toggleSidebarVisibility"
+    },
+
+    // Alt+Shift+B to reveal current file in sidebar
+    {
+        "key": "alt+shift+b",
+        "command": "workbench.files.action.showActiveFileInExplorer"
+    },
+
+    // Space l in sidebar to toggle focus back to editor
+    {
+        "key": "space l",
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "sideBarFocus && vim.mode == 'Normal'"
+    },
+
+    // File explorer: 'a' to create new file
+    {
+        "key": "a",
+        "command": "explorer.newFile",
+        "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
+    },
+
+    // File explorer: Shift+A to create new directory
+    {
+        "key": "shift+a",
+        "command": "explorer.newFolder",
+        "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
+    },
+
+    // File explorer: x to delete
+    {
+        "key": "x",
+        "command": "deleteFile",
+        "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
+    },
+
+    // File explorer: r to rename
+    {
+        "key": "r",
+        "command": "renameFile",
+        "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
+    },
+
+    // ============================================================================
+    // VIM ENHANCEMENTS
+    // ============================================================================
+
+    // Alt+z to toggle fold (matching nvim's Alt+z for za)
+    {
+        "key": "alt+z",
+        "command": "editor.toggleFold",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+
+    // Clear search highlights with Escape
+    {
+        "key": "escape",
+        "command": "vim.remap",
+        "when": "vim.mode == 'Normal' && editorTextFocus",
+        "args": {
+            "after": [
+                ":",
+                "n",
+                "o",
+                "h",
+                "l",
+                "<CR>"
+            ]
+        }
+    },
+
+    // ============================================================================
+    // LINE NUMBERS & DISPLAY
+    // ============================================================================
+
+    // Leader n to toggle line numbers
+    {
+        "key": "space n",
+        "command": "editor.action.toggleRenderWhitespace",
+        "when": "vim.mode == 'Normal' && editorTextFocus"
+    },
+
+    // Leader rn to toggle relative line numbers
+    {
+        "key": "space r n",
+        "command": "vim.remap",
+        "when": "vim.mode == 'Normal' && editorTextFocus",
+        "args": {
+            "commands": [
+                {
+                    "command": "settings.action.editFocusedSetting"
+                }
+            ]
+        }
+    },
+
+    // ============================================================================
+    // COMMENTS
+    // ============================================================================
+
+    // Leader / for toggle comment (normal mode)
+    {
+        "key": "space /",
+        "command": "editor.action.commentLine",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+
+    // Leader / for toggle comment (visual mode)
+    {
+        "key": "space /",
+        "command": "editor.action.commentLine",
+        "when": "editorTextFocus && vim.mode == 'Visual'"
+    },
+
+    // ============================================================================
+    // LSP / DIAGNOSTICS
+    // ============================================================================
+
+    // Leader ds for diagnostics
+    {
+        "key": "space d s",
+        "command": "workbench.actions.view.problems",
+        "when": "vim.mode == 'Normal'"
+    },
+
+    // Leader ca for code actions
+    {
+        "key": "space c a",
+        "command": "editor.action.quickFix",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+
+    // Leader rn for rename symbol
+    {
+        "key": "space r r",
+        "command": "editor.action.rename",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+
+    // gd for go to definition
+    {
+        "key": "g d",
+        "command": "editor.action.revealDefinition",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+
+    // gr for find references
+    {
+        "key": "g r",
+        "command": "editor.action.goToReferences",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+
+    // K for hover documentation
+    {
+        "key": "shift+k",
+        "command": "editor.action.showHover",
+        "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+
+    // ============================================================================
+    // GIT
+    // ============================================================================
+
+    // Leader gt to toggle git blame
+    {
+        "key": "space g t",
+        "command": "gitlens.toggleLineBlame",
+        "when": "vim.mode == 'Normal' && editorTextFocus"
+    },
+
+    // Leader gs for git status / source control
+    {
+        "key": "space g s",
+        "command": "workbench.view.scm",
+        "when": "vim.mode == 'Normal'"
+    },
+
+    // ============================================================================
+    // WINDOW MANAGEMENT
+    // ============================================================================
+
+    // Ctrl+Shift+Z to toggle zen mode
+    {
+        "key": "ctrl+shift+z",
+        "command": "workbench.action.toggleZenMode"
+    },
+
+    // ============================================================================
+    // TERMINAL
+    // ============================================================================
+
+    // Ctrl+` to toggle terminal (VSCode default, keeping for reference)
+    {
+        "key": "ctrl+`",
+        "command": "workbench.action.terminal.toggleTerminal"
+    },
+
+    // Leader t t to toggle terminal
+    {
+        "key": "space t t",
+        "command": "workbench.action.terminal.toggleTerminal",
+        "when": "vim.mode == 'Normal'"
+    }
+]
