@@ -64,35 +64,35 @@
     {
         "key": "space f f",
         "command": "workbench.action.quickOpen",
-        "when": "vim.mode == 'Normal' && !inDebugRepl"
+        "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
     },
 
     // Leader fw for project-wide search (live grep)
     {
         "key": "space f w",
         "command": "workbench.action.findInFiles",
-        "when": "vim.mode == 'Normal' && !inDebugRepl"
+        "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
     },
 
     // Leader fb for buffer list
     {
         "key": "space f b",
         "command": "workbench.action.showAllEditors",
-        "when": "vim.mode == 'Normal' && !inDebugRepl"
+        "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
     },
 
     // Leader fz for search in current buffer
     {
         "key": "space f z",
         "command": "actions.find",
-        "when": "vim.mode == 'Normal' && !inDebugRepl"
+        "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
     },
 
     // Leader fo for recent files (oldfiles)
     {
         "key": "space f o",
         "command": "workbench.action.openRecent",
-        "when": "vim.mode == 'Normal' && !inDebugRepl"
+        "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
     },
 
     // ============================================================================
@@ -123,7 +123,7 @@
     {
         "key": "space x",
         "command": "workbench.action.closeActiveEditor",
-        "when": "vim.mode == 'Normal' && !inDebugRepl"
+        "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
     },
 
     // Alt+w l to close items to the right
@@ -170,19 +170,19 @@
     {
         "key": "space shift+l",
         "command": "workbench.action.moveEditorToRightGroup",
-        "when": "vim.mode == 'Normal'"
+        "when": "editorTextFocus && vim.mode == 'Normal'"
     },
     {
         "key": "space shift+j",
         "command": "workbench.action.moveEditorToBelowGroup",
-        "when": "vim.mode == 'Normal'"
+        "when": "editorTextFocus && vim.mode == 'Normal'"
     },
 
     // Leader l to focus next editor group
     {
         "key": "space l",
         "command": "workbench.action.focusNextGroup",
-        "when": "vim.mode == 'Normal' && !inDebugRepl && !sideBarFocus"
+        "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
     },
 
     // ============================================================================
@@ -205,7 +205,7 @@
     {
         "key": "space l",
         "command": "workbench.action.focusActiveEditorGroup",
-        "when": "sideBarFocus && vim.mode == 'Normal'"
+        "when": "sideBarFocus && !editorTextFocus"
     },
 
     // File explorer: 'a' to create new file
@@ -272,14 +272,14 @@
     {
         "key": "space n",
         "command": "editor.action.toggleRenderWhitespace",
-        "when": "vim.mode == 'Normal' && editorTextFocus"
+        "when": "editorTextFocus && vim.mode == 'Normal'"
     },
 
     // Leader rn to toggle relative line numbers
     {
         "key": "space r n",
         "command": "vim.remap",
-        "when": "vim.mode == 'Normal' && editorTextFocus",
+        "when": "editorTextFocus && vim.mode == 'Normal'",
         "args": {
             "commands": [
                 {
@@ -315,7 +315,7 @@
     {
         "key": "space d s",
         "command": "workbench.actions.view.problems",
-        "when": "vim.mode == 'Normal'"
+        "when": "editorTextFocus && vim.mode == 'Normal'"
     },
 
     // Leader ca for code actions
@@ -361,14 +361,14 @@
     {
         "key": "space g t",
         "command": "gitlens.toggleLineBlame",
-        "when": "vim.mode == 'Normal' && editorTextFocus"
+        "when": "editorTextFocus && vim.mode == 'Normal'"
     },
 
     // Leader gs for git status / source control
     {
         "key": "space g s",
         "command": "workbench.view.scm",
-        "when": "vim.mode == 'Normal'"
+        "when": "editorTextFocus && vim.mode == 'Normal'"
     },
 
     // ============================================================================
@@ -395,6 +395,6 @@
     {
         "key": "space t t",
         "command": "workbench.action.terminal.toggleTerminal",
-        "when": "vim.mode == 'Normal'"
+        "when": "editorTextFocus && vim.mode == 'Normal'"
     }
 ]

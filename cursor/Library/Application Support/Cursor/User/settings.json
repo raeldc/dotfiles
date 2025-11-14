@@ -8,9 +8,12 @@
     "vim.handleKeys": {
         "<C-d>": true,
         "<C-s>": false,
-        "<C-z>": false
+        "<C-z>": false,
+        "<C-w>": false
     },
     "vim.useCtrlKeys": true,
+    "vim.overrideCopy": false,
+    "vim.enableNeovim": false,
     "vim.insertModeKeyBindings": [
         {
             "before": ["j", "k"],
@@ -39,7 +42,7 @@
     // ============================================================================
     // EDITOR APPEARANCE (matching Zed theme and layout)
     // ============================================================================
-    "workbench.colorTheme": "Base16 Dark Ayu Dark",
+    "workbench.colorTheme": "JetBrains New Dark",
     "editor.fontSize": 14,
     "editor.fontFamily": "DroidSansM Nerd Font Mono, Menlo, Monaco, 'Courier New', monospace",
     "editor.lineNumbers": "relative",
