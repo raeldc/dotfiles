@@ -7,6 +7,22 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "title_bar": {
+    "show_menus": false,
+    "show_project_items": true,
+    "show_branch_name": true,
+    "show_branch_icon": true
+  },
+  "tab_bar": {
+    "show": false,
+    "show_nav_history_buttons": false
+  },
+  "tabs": {
+    "git_status": true,
+    "activate_on_close": "left_neighbour",
+    "file_icons": true
+  },
+  "ui_font_family": ".ZedSans",
   "context_servers": {
     "mcp-server-nextjs": {
       "source": "custom",
@@ -68,15 +84,15 @@
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "anthropic",
-      "model": "claude-3-7-sonnet-latest"
+      "provider": "zed.dev",
+      "model": "claude-3-7-sonnet"
     }
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
   "theme": "Base16 Ayu Dark",
-  "ui_font_size": 16,
-  "buffer_font_size": 14,
+  "ui_font_size": 16.0,
+  "buffer_font_size": 14.0,
   "vim": {
     "toggle_relative_line_numbers": true
   },
