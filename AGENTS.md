@@ -1,22 +1,22 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-This repo tracks macOS dotfiles that are symlinked into $HOME. Shell entrypoints (.zshrc, .zprofile, .zshenv, .profile, .bash_profile) live at the root with UI configs like .wezterm.lua and .p10k.zsh. Application folders under .config/ house editor/terminal state: nvim/ (NvChad Lua modules), zed/ (settings + keymaps JSON), and zellij/ (KDL layouts).
+Dotfiles mirror macOS $HOME via symlinks. Root-level shell entrypoints (.zshrc, .zprofile, .zshenv, .profile, .bash_profile) sit beside UI configs like .wezterm.lua and .p10k.zsh. Editor and terminal assets live under .config/: nvim/ (NvChad Lua modules inside lua/), zed/ (settings.json, keymap.json, themes/), and zellij/ (KDL layouts). CLI helpers belong in bin/ (e.g., bin/goland); keep scripts single-purpose and document new binaries here or in CLAUDE.md.
 
 ## Build, Test & Development Commands
-- `nvim --headless "+Lazy sync" +qa` validates plugin specs in `.config/nvim/lua/plugins` after dependency edits.
-- `zsh -n .zshrc && zsh -i -c exit` catches syntax issues, then launches an interactive prompt to confirm Powerlevel10k, fzf, and env hooks still load.
-- `jq . .config/zed/settings.json` (and other JSON files) enforces strict formatting before committing.
-- `rg --files` and `rg "<term>" -n` should be your default file/contents search to keep updates consistent across duplicated configs.
+- `nvim --headless "+Lazy sync" +qa` verifies plugin specs in `.config/nvim/lua/plugins` after dependency tweaks.
+- `zsh -n .zshrc && zsh -i -c exit` syntax-checks the profile, then ensures Powerlevel10k, fzf, and path exports still load in an interactive shell.
+- `jq . .config/zed/settings.json` (repeat for other JSON) enforces formatting for Zed artifacts.
+- `rg "<term>" -n` / `rg --files` should be your default search across duplicated configs; skip slower `find`+`grep` chains.
 
 ## Coding Style & Naming Conventions
-Match the prevailing style: two-space indents for shell profiles, tabs in Lua (NvChad + WezTerm), pretty-printed JSON for Zed, and concise comments only when behavior is non-obvious. Keep environment names upper snake case (`NVM_DIR`), aliases lowercase (`fvim`, `lzd`), and new scripts executable with dashed names (`bin/docker-start`). Use `stylua` and `shfmt -i 2 -ci` before large refactors; commit the formatted result.
+Use two-space indents in shell blocks, tabs in Lua (NvChad + WezTerm defaults), and prettified JSON with trailing newlines for Zed. Keep environment variables uppercase snake_case (`NVM_DIR`), aliases lowercase (`fvim`, `docker-start`), and script names dashed (`bin/colima-start`). Guard optional tooling with `command -v` checks and add comments only when behavior is non-obvious.
 
 ## Testing & Validation Guidelines
-Run `shellcheck <file>` on shell updates, then reopen a new terminal session to observe prompts, aliases, and PATH changes. For Neovim, open `nvim` and execute `:checkhealth` plus any relevant language tools (Mason, Treesitter) whenever plugin lists or LSP configs change. Reload WezTerm/Zellij after editing their configs and describe any manual steps in the PR body.
+Shell edits: run `shellcheck <file>` plus a fresh terminal session to verify prompts and PATH changes. Neovim tweaks: open `nvim`, run `:checkhealth`, and note Mason/Treesitter status if you touched LSP or plugins. For terminal configs (WezTerm, Zellij), restart the app/session and capture regressions or screenshots whenever keymaps or palettes move. Document any manual migration (e.g., `stow` commands) in AGENTS.md for future passes.
 
 ## Commit & Pull Request Guidelines
-The history follows Conventional Commits with scopes (`feat(zed): …`, `fix(nvim): …`); keep subjects imperative and under ~70 characters. Group related config edits together so stow/restore cycles remain atomic, and avoid mixing shell + editor changes unless they depend on each other. PRs should call out the files touched, the validation commands you ran, and screenshots for visual tweaks (themes, prompts, terminal palettes).
+Commits follow Conventional Commits with scopes (`feat(zed): …`, `chore(shell): …`); keep subjects imperative and under ~70 chars. Group related config files so symlink updates stay atomic and avoid mixing shell + editor tweaks unless dependent. PRs should list touched paths, verification commands, screenshots for visual tweaks, and mention new dependencies (Homebrew, npm, Cargo) with install notes.
 
 ## Security & Configuration Tips
-Do not commit secrets or machine-specific tokens; keep them in ignored `.local` files or the macOS keychain. When a change adds a dependency (Homebrew formula, npm tool, etc.), guard it with `command -v` checks and mention install steps in the PR description so other machines can reproduce the setup.
+Keep secrets or machine-specific tokens out of Git; use ignored `.local` files or the macOS keychain. Wrap new tooling in guards (`command -v uv >/dev/null || return`) so clean machines do not fail during login, and record any extra bootstrap steps in this guide.
