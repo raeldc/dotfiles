@@ -334,13 +334,13 @@
   // ============================================================================
 
   {
-    "context": "Editor",
+    "context": "Editor || (ProjectPanel && not_editing)",
     "bindings": {
       "shift-space": "tab_switcher::Toggle"
     }
   },
   {
-    "context": "Editor",
+    "context": "Editor || (ProjectPanel && not_editing)",
     "bindings": {
       "shift-tab": "tab_switcher::ToggleAll"
     }
@@ -349,9 +349,11 @@
     "context": "TabSwitcher",
     "bindings": {
       "j": "menu::SelectNext",
-      "k": "menu::SelectPrev",
+      "k": "menu::SelectPrevious",
+      "w": "tab_switcher::CloseSelectedItem",
       "shift-j": "menu::SelectNext",
-      "shift-k": "menu::SelectPrev"
+      "shift-k": "menu::SelectPrevious",
+      "shift-w": "tab_switcher::CloseSelectedItem"
     }
   }
 ]
