@@ -327,5 +327,31 @@
     "bindings": {
       "ctrl-shift-z": "workspace::ToggleZoom"
     }
+  },
+
+  // ============================================================================
+  // TAB SWITCHER NAVIGATION
+  // ============================================================================
+
+  {
+    "context": "Editor",
+    "bindings": {
+      "shift-space": "tab_switcher::Toggle"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "shift-tab": "tab_switcher::ToggleAll"
+    }
+  },
+  {
+    "context": "TabSwitcher",
+    "bindings": {
+      "j": "menu::SelectNext",
+      "k": "menu::SelectPrev",
+      "shift-j": "menu::SelectNext",
+      "shift-k": "menu::SelectPrev"
+    }
   }
 ]
