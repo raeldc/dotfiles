@@ -142,7 +142,6 @@
         "Cargo.toml"
     ],
     "rust-analyzer.checkOnSave": true,
-    "rust-analyzer.check.command": "clippy",
     "rust-analyzer.rustfmt.overrideCommand": [
         "rustfmt"
     ],
@@ -175,5 +174,6 @@
     },
     "database-client.autoSync": true,
     "makefile.configureOnOpen": false,
-    "workbench.editor.tabActionLocation": "right"
+    "workbench.editor.tabActionLocation": "right",
+    "workbench.editor.enablePreview": false
 }

@@ -325,7 +325,8 @@
   // Ctrl+Shift+Z to toggle zoom
   {
     "bindings": {
-      "ctrl-shift-z": "workspace::ToggleZoom"
+      "ctrl-shift-z": "workspace::ToggleZoom",
+      "alt-shift-m": "workspace::ToggleZoom"
     }
   },
 
@@ -334,13 +335,13 @@
   // ============================================================================
 
   {
-    "context": "Editor || (ProjectPanel && not_editing)",
+    "context": "(Editor || ProjectPanel) && vim_mode != insert",
     "bindings": {
       "shift-space": "tab_switcher::Toggle"
     }
   },
   {
-    "context": "Editor || (ProjectPanel && not_editing)",
+    "context": "(Editor || ProjectPanel) && vim_mode != insert",
     "bindings": {
       "shift-tab": "tab_switcher::ToggleAll"
     }
