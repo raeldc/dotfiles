@@ -15,6 +15,9 @@
 - `terraform` completion via `/opt/homebrew/bin/terraform`
 - Custom environment loader at `~/.local/bin/env`
 
+### Documentation
+- Captured every Homebrew formula/cask and replay steps in `HOME_BREW_PACKAGES.md` so future agents can reinstall the macOS toolchain.
+
 ### Commands Executed
 - None yet. Record here any commands I run on your behalf so the list can be replayed on a fresh machine.
 
