@@ -20,3 +20,6 @@ Commits follow Conventional Commits with scopes (`feat(zed): …`, `chore(shell)
 
 ## Security & Configuration Tips
 Keep secrets or machine-specific tokens out of Git; use ignored `.local` files or the macOS keychain. Wrap new tooling in guards (`command -v uv >/dev/null || return`) so clean machines do not fail during login, and record any extra bootstrap steps in this guide.
+
+## Activity Tracking
+- Record every command and manual step in `AGENT_ACTIONS.md` so the workflow can be replayed on a fresh machine.
