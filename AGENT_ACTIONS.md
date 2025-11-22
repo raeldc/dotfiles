@@ -19,5 +19,16 @@
 - Captured every Homebrew formula/cask and replay steps in `HOME_BREW_PACKAGES.md` so future agents can reinstall the macOS toolchain.
 
 ### Commands Executed
-- None yet. Record here any commands I run on your behalf so the list can be replayed on a fresh machine.
+- `ls`
+- `ls -a .config`
+- `ls .config/zed`
+- `sed -n '1,200p' .config/zed/keymap.json`
+- `rg -n '"space' .config/zed/keymap.json`
+- `sed -n '200,400p' .config/zed/keymap.json`
+- `rg -n "SendKeystrokes" -n . -g"*.json"`
+- `rg -n "SendKeystrokes" .`
+- `sed -n '1,200p' AGENT_ACTIONS.md`
+- `jq . .config/zed/keymap.json`
 
+### Manual Changes
+- Added insert-mode space passthrough binding in `.config/zed/keymap.json` to avoid leader wait states.

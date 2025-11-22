@@ -318,6 +318,14 @@
     }
   },
 
+  // Ensure space inserts a literal space in insert mode (avoid leader wait)
+  {
+    "context": "Editor && vim_mode == insert",
+    "bindings": {
+      "space": ["workspace::SendKeystrokes", "space"]
+    }
+  },
+
   // ============================================================================
   // WINDOW MANAGEMENT
   // ============================================================================
