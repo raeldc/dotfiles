@@ -38,14 +38,14 @@
     }
   },
   "edit_predictions": {
-    "mode": "subtle"
+    "mode": "eager"
   },
-  "show_edit_predictions": false,
+  "show_edit_predictions": true,
   "completions": {
     "lsp": true
   },
   "show_completion_documentation": false,
-  "show_completions_on_input": false,
+  "show_completions_on_input": true,
   "icon_theme": "Bearded Icon Theme",
   "languages": {
     "Go": {
@@ -71,7 +71,7 @@
     "play_sound_when_agent_done": true,
     "default_model": {
       "provider": "zed.dev",
-      "model": "gpt-5"
+      "model": "claude-3-7-sonnet"
     }
   },
   "base_keymap": "VSCode",
