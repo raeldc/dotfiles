@@ -1,0 +1,18 @@
+{
+  "security": {
+    "auth": {
+      "selectedType": "gemini-api-key"
+    }
+  },
+  "general": {
+    "vimMode": true,
+    "previewFeatures": true,
+    "preferredEditor": "zed"
+  },
+  "ui": {
+    "footer": {
+      "hideContextPercentage": true
+    },
+    "theme": "Shades Of Purple"
+  }
+}
