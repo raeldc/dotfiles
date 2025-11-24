@@ -82,11 +82,19 @@
     }
   },
 
+  // Leader fw for project-wide search (live grep)
+   {
+     "context": "Editor && vim_mode == normal",
+     "bindings": {
+       "space f r": "buffer_search::DeployReplace"
+     }
+   },
+
   // Leader fb for buffer list
   {
     "context": "Editor && vim_mode == normal",
     "bindings": {
-      "space f b": "tab_switcher::Toggle"
+      "space f b": "tab_switcher::ToggleAll"
     }
   },
 
@@ -345,13 +353,13 @@
   {
     "context": "(Editor || ProjectPanel) && vim_mode != insert",
     "bindings": {
-      "shift-space": "tab_switcher::Toggle"
+      "shift-space": "tab_switcher::ToggleAll"
     }
   },
   {
     "context": "(Editor || ProjectPanel) && vim_mode != insert",
     "bindings": {
-      "shift-tab": "tab_switcher::ToggleAll"
+      "shift-tab": "tab_switcher::Toggle"
     }
   },
   {
