@@ -25,13 +25,11 @@
   "ui_font_family": ".ZedSans",
   "context_servers": {
     "mcp-server-nextjs": {
-      "source": "custom",
       "enabled": false,
       "command": "npx",
       "args": ["-y", "next-devtools-mcp@latest"]
     },
     "shadcn-mcp-server": {
-      "source": "custom",
       "enabled": false,
       "command": "pnpx",
       "args": ["shadcn@latest", "mcp"]
@@ -54,7 +52,7 @@
   },
   "agent": {
     "dock": "right",
-    "default_profile": "ask",
+    "default_profile": "write",
     "profiles": {
       "cautious": {
         "name": "Cautious",
@@ -65,13 +63,13 @@
     },
     "inline_assistant_model": {
       "provider": "anthropic",
-      "model": "claude-sonnet-4-5-latest"
+      "model": "claude-3-7-sonnet-latest"
     },
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "zed.dev",
-      "model": "claude-3-7-sonnet"
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet-latest"
     }
   },
   "base_keymap": "VSCode",

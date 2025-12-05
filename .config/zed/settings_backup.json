@@ -7,28 +7,83 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-  "ssh_connections": [
-    {
-      "host": "devbox",
-      "username": "rael",
-      "projects": []
+  "title_bar": {
+    "show_menus": false,
+    "show_project_items": true,
+    "show_branch_name": true,
+    "show_branch_icon": true
+  },
+  "tab_bar": {
+    "show": false,
+    "show_nav_history_buttons": false
+  },
+  "tabs": {
+    "git_status": true,
+    "activate_on_close": "left_neighbour",
+    "file_icons": true
+  },
+  "ui_font_family": ".ZedSans",
+  "context_servers": {
+    "mcp-server-nextjs": {
+      "source": "custom",
+      "enabled": false,
+      "command": "npx",
+      "args": ["-y", "next-devtools-mcp@latest"]
+    },
+    "shadcn-mcp-server": {
+      "source": "custom",
+      "enabled": false,
+      "command": "pnpx",
+      "args": ["shadcn@latest", "mcp"]
     }
-  ],
+  },
+  "edit_predictions": {
+    "mode": "eager"
+  },
+  "show_edit_predictions": true,
+  "completions": {
+    "lsp": true
+  },
+  "show_completion_documentation": false,
+  "show_completions_on_input": true,
+  "icon_theme": "Bearded Icon Theme",
+  "languages": {
+    "Go": {
+      "format_on_save": "on"
+    }
+  },
   "agent": {
+    "dock": "right",
+    "default_profile": "write",
+    "profiles": {
+      "cautious": {
+        "name": "Cautious",
+        "tools": {},
+        "enable_all_context_servers": false,
+        "context_servers": {}
+      }
+    },
+    "inline_assistant_model": {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-5-thinking-latest"
+    },
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "openai",
-      "model": "o3-mini"
-    },
-    "version": "2"
+      "provider": "anthropic",
+      "model": "claude-opus-4-5-latest"
+    }
   },
   "base_keymap": "VSCode",
   "vim_mode": true,
-  "theme": "Andromeda",
-  "ui_font_size": 16,
-  "buffer_font_size": 14,
+  "theme": "Base16 Ayu Dark",
+  "ui_font_size": 16.0,
+  "buffer_font_size": 14.0,
   "vim": {
     "toggle_relative_line_numbers": true
+  },
+  "format_on_save": "off",
+  "features": {
+    "edit_prediction_provider": "zed"
   }
 }

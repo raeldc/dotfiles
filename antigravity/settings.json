@@ -5,7 +5,7 @@
     }
   },
   "general": {
-    "vimMode": true,
+    "vimMode": false,
     "previewFeatures": true,
     "preferredEditor": "zed"
   },
