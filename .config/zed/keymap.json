@@ -10,7 +10,7 @@
     }
   },
 
-  // Alt+z to toggle fold (matching nvim's Alt+z for za)
+  // Alt-llt+z to toggle fold (matching nvim's Alt+z for za)
   {
     "context": "Editor && vim_mode == normal",
     "bindings": {
@@ -179,7 +179,13 @@
     "context": "((VimControl && !menu) || (!Editor && !Terminal))",
     "bindings": {
       "alt-h": "workspace::ActivatePaneLeft",
-      "alt-l": "workspace::ActivatePaneRight"
+      "alt-H": "workspace::ActivatePaneLeft",
+      "alt-l": "workspace::ActivatePaneRight",
+      "alt-L": "workspace::ActivatePaneRight",
+      "alt-k": "workspace::ActivatePaneUp",
+      "alt-K": "workspace::ActivatePaneUp",
+      "alt-j": "workspace::ActivatePaneDown",
+      "alt-J": "workspace::ActivatePaneDown"
     }
   },
 
