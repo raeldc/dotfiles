@@ -9,22 +9,27 @@
     },
 
     // ============================================================================
-    // VIM MODE ESCAPE BINDINGS
+    // VIM MODE ESCAPE BINDINGS (matching Zed: j k, j j, k k, u u sequences)
     // ============================================================================
     {
-        "key": "j",
+        "key": "j k",
         "command": "extension.vim_escape",
         "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
     },
     {
-        "key": "k",
+        "key": "j j",
         "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && vim.waitingForJK && !inDebugRepl && !suggestWidgetVisible"
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
     },
     {
-        "key": "u",
+        "key": "k k",
         "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && vim.waitingForUU && !inDebugRepl && !suggestWidgetVisible"
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
+    },
+    {
+        "key": "u u",
+        "command": "extension.vim_escape",
+        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
     },
 
     // ============================================================================
@@ -74,6 +79,13 @@
         "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
     },
 
+    // Leader fr for find and replace
+    {
+        "key": "space f r",
+        "command": "editor.action.startFindReplaceAction",
+        "when": "editorTextFocus && vim.mode == 'Normal' && !inDebugRepl"
+    },
+
     // Leader fb for buffer list
     {
         "key": "space f b",
@@ -99,23 +111,37 @@
     // BUFFER/TAB NAVIGATION
     // ============================================================================
 
-    // Alt+[ and Alt+] for previous/next tab
+    // Tab/Shift-Tab for next/previous buffer (matching Zed)
+    {
+        "key": "tab",
+        "command": "workbench.action.nextEditor",
+        "when": "!editorTextFocus && !terminalFocus && !inQuickOpen"
+    },
+    {
+        "key": "shift+tab",
+        "command": "workbench.action.previousEditor",
+        "when": "!editorTextFocus && !terminalFocus && !inQuickOpen"
+    },
+
+    // Alt+[ and Alt+] for previous/next item (matching Zed)
     {
         "key": "alt+]",
-        "command": "workbench.action.nextEditor"
+        "command": "workbench.action.nextEditor",
+        "when": "!editorTextFocus || vim.mode == 'Insert'"
     },
     {
         "key": "alt+[",
-        "command": "workbench.action.previousEditor"
+        "command": "workbench.action.previousEditor",
+        "when": "!editorTextFocus || vim.mode == 'Insert'"
     },
 
-    // Alt+{ and Alt+} to move tabs left/right
+    // Alt+{ and Alt+} to swap items left/right (matching Zed)
     {
-        "key": "alt+shift+]",
+        "key": "alt+}",
         "command": "workbench.action.moveEditorRightInGroup"
     },
     {
-        "key": "alt+shift+[",
+        "key": "alt+{",
         "command": "workbench.action.moveEditorLeftInGroup"
     },
 
@@ -208,6 +234,13 @@
         "when": "sideBarFocus && !editorTextFocus"
     },
 
+    // File explorer: Enter to open file (override default rename behavior)
+    {
+        "key": "enter",
+        "command": "list.select",
+        "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
+    },
+
     // File explorer: 'a' to create new file
     {
         "key": "a",
@@ -229,9 +262,9 @@
         "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
     },
 
-    // File explorer: r to rename
+    // File explorer: Shift+R to rename
     {
-        "key": "r",
+        "key": "shift+r",
         "command": "renameFile",
         "when": "explorerViewletVisible && filesExplorerFocus && !inputFocus"
     },
@@ -332,19 +365,8 @@
         "when": "editorTextFocus && vim.mode == 'Normal'"
     },
 
-    // gd for go to definition
-    {
-        "key": "g d",
-        "command": "editor.action.revealDefinition",
-        "when": "editorTextFocus && vim.mode == 'Normal'"
-    },
-
-    // gr for find references
-    {
-        "key": "g r",
-        "command": "editor.action.goToReferences",
-        "when": "editorTextFocus && vim.mode == 'Normal'"
-    },
+    // NOTE: gd, gr, gg, G are handled natively by the Vim extension
+    // Do NOT add VSCode keybindings for g* commands as they intercept the g prefix
 
     // K for hover documentation
     {
@@ -375,9 +397,15 @@
     // WINDOW MANAGEMENT
     // ============================================================================
 
-    // Ctrl+Shift+Z to toggle zen mode
+    // Ctrl+Shift+Z to toggle zoom (matching Zed)
     {
         "key": "ctrl+shift+z",
+        "command": "workbench.action.toggleZenMode"
+    },
+
+    // Alt+Shift+M to toggle zoom (matching Zed)
+    {
+        "key": "alt+shift+m",
         "command": "workbench.action.toggleZenMode"
     },
 
@@ -385,60 +413,57 @@
     // TAB SWITCHER NAVIGATION
     // ============================================================================
 
-    // Shift+Space: toggle tab switcher from editor or explorer
+    // Shift+Space: toggle tab switcher (matching Zed - ToggleAll)
     {
         "key": "shift+space",
         "command": "workbench.action.showAllEditors",
-        "when": "editorTextFocus && vim.mode == 'Normal'"
-    },
-    {
-        "key": "shift+space",
-        "command": "workbench.action.showAllEditors",
-        "when": "filesExplorerFocus"
+        "when": "(editorTextFocus || filesExplorerFocus) && vim.mode != 'Insert'"
     },
 
-    // Shift+Tab: toggle tab switcher across all groups
+    // Shift+Tab: toggle tab switcher (matching Zed - Toggle)
     {
         "key": "shift+tab",
         "command": "workbench.action.showAllEditorsByMostRecentlyUsed",
-        "when": "editorTextFocus && vim.mode == 'Normal'"
-    },
-    {
-        "key": "shift+tab",
-        "command": "workbench.action.showAllEditorsByMostRecentlyUsed",
-        "when": "filesExplorerFocus"
+        "when": "(editorTextFocus || filesExplorerFocus) && vim.mode != 'Insert'"
     },
 
-    // Quick Open navigation (j/k) and close (w) bindings
+    // Tab switcher navigation (j/k/w) - matching Zed TabSwitcher context
     {
         "key": "j",
         "command": "workbench.action.quickOpenSelectNext",
-        "when": "inQuickOpen"
+        "when": "inQuickOpen || activeViewlet == 'workbench.view.explorer'"
     },
     {
         "key": "k",
         "command": "workbench.action.quickOpenSelectPrevious",
-        "when": "inQuickOpen"
+        "when": "inQuickOpen || activeViewlet == 'workbench.view.explorer'"
     },
     {
         "key": "w",
         "command": "workbench.action.closeActiveEditor",
-        "when": "inQuickOpen"
+        "when": "inQuickOpen || activeViewlet == 'workbench.view.explorer'"
     },
+
+
+    // ============================================================================
+    // AI / EDIT PREDICTIONS (matching Zed)
+    // ============================================================================
+
+    // Ctrl+/ to show edit prediction in insert mode
     {
-        "key": "shift+j",
-        "command": "workbench.action.quickOpenSelectNext",
-        "when": "inQuickOpen"
+        "key": "ctrl+/",
+        "command": "editor.action.inlineSuggest.trigger",
+        "when": "editorTextFocus && vim.mode == 'Insert'"
     },
+
+    // Ensure space inserts a literal space in insert mode (avoid leader wait)
     {
-        "key": "shift+k",
-        "command": "workbench.action.quickOpenSelectPrevious",
-        "when": "inQuickOpen"
-    },
-    {
-        "key": "shift+w",
-        "command": "workbench.action.closeActiveEditor",
-        "when": "inQuickOpen"
+        "key": "space",
+        "command": "type",
+        "args": {
+            "text": " "
+        },
+        "when": "editorTextFocus && vim.mode == 'Insert' && !suggestWidgetVisible"
     },
 
     // ============================================================================

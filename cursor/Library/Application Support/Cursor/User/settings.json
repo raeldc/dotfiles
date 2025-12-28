@@ -14,6 +14,8 @@
     "vim.useCtrlKeys": true,
     "vim.overrideCopy": false,
     "vim.enableNeovim": false,
+    "vim.relativeLineNumbers": true,
+    "vim.disableExtension": false,
     "vim.insertModeKeyBindings": [
         {
             "before": ["j", "k"],
@@ -38,11 +40,12 @@
             "commands": [":nohl"]
         }
     ],
+    // NOTE: gg, G, gd, gr are handled natively by the Vim extension - no custom bindings needed
 
     // ============================================================================
     // EDITOR APPEARANCE (matching Zed theme and layout)
     // ============================================================================
-    "workbench.colorTheme": "JetBrains New Dark",
+    "workbench.colorTheme": "Ayu Dark",
     "editor.fontSize": 14,
     "editor.fontFamily": "DroidSansM Nerd Font Mono, Menlo, Monaco, 'Courier New', monospace",
     "editor.lineNumbers": "relative",
@@ -54,10 +57,11 @@
     "editor.guides.indentation": true,
 
     // ============================================================================
-    // EDITOR BEHAVIOR
+    // EDITOR BEHAVIOR (matching Zed)
     // ============================================================================
     "editor.formatOnSave": false,
     "editor.inlineSuggest.enabled": true,
+    "editor.inlineSuggest.showToolbar": "always",
     "editor.accessibilitySupport": "off",
     "editor.wordWrap": "off",
     "editor.quickSuggestions": {
@@ -68,6 +72,7 @@
     "editor.suggestOnTriggerCharacters": true,
     "editor.acceptSuggestionOnEnter": "on",
     "editor.tabCompletion": "on",
+    "editor.suggest.showStatusBar": false,
     "files.autoSave": "off",
 
     // ============================================================================
