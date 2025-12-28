@@ -123,16 +123,14 @@
         "when": "!editorTextFocus && !terminalFocus && !inQuickOpen"
     },
 
-    // Alt+[ and Alt+] for previous/next item (matching Zed)
+    // Alt+[ and Alt+] for previous/next tab
     {
         "key": "alt+]",
-        "command": "workbench.action.nextEditor",
-        "when": "!editorTextFocus || vim.mode == 'Insert'"
+        "command": "workbench.action.nextEditor"
     },
     {
         "key": "alt+[",
-        "command": "workbench.action.previousEditor",
-        "when": "!editorTextFocus || vim.mode == 'Insert'"
+        "command": "workbench.action.previousEditor"
     },
 
     // Alt+{ and Alt+} to swap items left/right (matching Zed)
