@@ -185,9 +185,16 @@
         "command": "workbench.action.navigateLeft",
         "when": "editorTextFocus || editorFocus"
     },
+    // Alt+l from file tree -> go to editor
     {
         "key": "alt+l",
-        "command": "workbench.action.navigateRight"
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "filesExplorerFocus || explorerViewletVisible && !editorTextFocus"
+    },
+    {
+        "key": "alt+l",
+        "command": "workbench.action.navigateRight",
+        "when": "!filesExplorerFocus && !explorerViewletVisible"
     },
     {
         "key": "alt+j",

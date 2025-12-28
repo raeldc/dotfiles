@@ -79,7 +79,6 @@
     // WORKBENCH APPEARANCE
     // ============================================================================
     "window.zoomLevel": 0,
-    "workbench.activityBar.location": "top",
     "workbench.sideBar.location": "left",
     "workbench.statusBar.visible": true,
     "workbench.editor.showTabs": "multiple",
@@ -180,5 +179,6 @@
     "database-client.autoSync": true,
     "makefile.configureOnOpen": false,
     "workbench.editor.tabActionLocation": "right",
-    "workbench.editor.enablePreview": false
+    "workbench.editor.enablePreview": false,
+    "go.toolsManagement.autoUpdate": true
 }
