@@ -174,14 +174,29 @@
     // PANE NAVIGATION & SPLITS
     // ============================================================================
 
-    // Alt+h and Alt+l for left/right pane navigation
+    // Alt+H from chat -> go back to editor (must come before general alt+h)
     {
         "key": "alt+h",
-        "command": "workbench.action.navigateLeft"
+        "command": "workbench.action.focusActiveEditorGroup",
+        "when": "!editorTextFocus && !editorFocus"
+    },
+
+    // Alt+h/l/j/k for pane navigation
+    {
+        "key": "alt+h",
+        "command": "workbench.action.navigateLeft",
+        "when": "editorTextFocus || editorFocus"
     },
     {
         "key": "alt+l",
         "command": "workbench.action.navigateRight"
+    },
+
+    // Cmd+R to open agent chat
+    {
+        "key": "cmd+r",
+        "command": "aichat.newchataction",
+        "when": "editorTextFocus"
     },
     {
         "key": "alt+j",
