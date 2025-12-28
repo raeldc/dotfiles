@@ -38,6 +38,10 @@
         {
             "before": ["<Esc>"],
             "commands": [":nohl"]
+        },
+        {
+            "before": ["z", "a"],
+            "commands": ["editor.toggleFold"]
         }
     ],
     // NOTE: gg, G, gd, gr are handled natively by the Vim extension - no custom bindings needed
