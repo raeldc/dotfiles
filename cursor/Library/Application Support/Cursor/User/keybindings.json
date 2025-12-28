@@ -189,13 +189,6 @@
         "key": "alt+l",
         "command": "workbench.action.navigateRight"
     },
-
-    // Cmd+R to open agent chat
-    {
-        "key": "cmd+r",
-        "command": "aichat.newchataction",
-        "when": "editorTextFocus"
-    },
     {
         "key": "alt+j",
         "command": "workbench.action.navigateDown"
