@@ -324,6 +324,13 @@
   // AI / EDIT PREDICTIONS
   // ============================================================================
 
+  // Alt+Cmd+B to toggle AI/agent panel
+  {
+    "bindings": {
+      "alt-cmd-b": "workspace::ToggleRightDock"
+    }
+  },
+
   // Ctrl+/ to show edit prediction in insert mode
   {
     "context": "vim_mode == insert",
