@@ -32,3 +32,31 @@
 
 ### Manual Changes
 - Added insert-mode space passthrough binding in `.config/zed/keymap.json` to avoid leader wait states.
+
+## 2026-01-11
+
+### Cursor Vim Keybindings Fix
+
+#### Problem
+Insert mode escape sequences (jk, jj, kk, uu) were blocking normal typing in Cursor. When pressing `j`, it would wait indefinitely for the next key instead of timing out and inserting the character like Neovim/Zed.
+
+#### Changes Made
+1. **Enabled Neovim integration** in `cursor/Library/Application Support/Cursor/User/settings.json`:
+   - Set `vim.enableNeovim: true`
+   - Added `vim.neovimPath: "/opt/homebrew/bin/nvim"`
+   - Adjusted `vim.timeout` to 200ms
+
+2. **Removed duplicate keybindings** from `cursor/Library/Application Support/Cursor/User/keybindings.json`:
+   - Removed VSCode-style `"key": "j k"` etc. escape bindings
+   - These are now handled solely via `vim.insertModeKeyBindings` in settings.json
+   - With Neovim backend, escape sequences work identically to Neovim
+
+#### Commands Executed
+- `which nvim` → `/opt/homebrew/bin/nvim`
+
+#### Verification Steps
+1. Restart Cursor to apply settings
+2. Enter insert mode and test:
+   - Type `jk` quickly → should escape to normal mode
+   - Type `ui` normally → should insert "ui" without blocking
+3. If issues persist, check `:checkhealth` in command palette

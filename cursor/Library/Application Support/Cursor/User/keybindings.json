@@ -9,28 +9,11 @@
     },
 
     // ============================================================================
-    // VIM MODE ESCAPE BINDINGS (matching Zed: j k, j j, k k, u u sequences)
+    // VIM MODE ESCAPE BINDINGS
     // ============================================================================
-    {
-        "key": "j k",
-        "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
-    },
-    {
-        "key": "j j",
-        "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
-    },
-    {
-        "key": "k k",
-        "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
-    },
-    {
-        "key": "u u",
-        "command": "extension.vim_escape",
-        "when": "editorTextFocus && vim.active && vim.mode == 'Insert' && !inDebugRepl && !suggestWidgetVisible"
-    },
+    // NOTE: Insert mode escape sequences (jk, jj, kk, uu) are handled via
+    // vim.insertModeKeyBindings in settings.json for proper Neovim-style behavior.
+    // With vim.enableNeovim: true, these will work exactly like in Neovim.
 
     // ============================================================================
     // FILE OPERATIONS & FORMATTING
@@ -293,22 +276,6 @@
         "when": "editorTextFocus && vim.mode == 'Normal'"
     },
 
-    // Clear search highlights with Escape
-    {
-        "key": "escape",
-        "command": "vim.remap",
-        "when": "vim.mode == 'Normal' && editorTextFocus",
-        "args": {
-            "after": [
-                ":",
-                "n",
-                "o",
-                "h",
-                "l",
-                "<CR>"
-            ]
-        }
-    },
 
     // ============================================================================
     // LINE NUMBERS & DISPLAY

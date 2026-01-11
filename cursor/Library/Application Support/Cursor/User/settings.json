@@ -5,6 +5,7 @@
     "vim.useSystemClipboard": true,
     "vim.hlsearch": true,
     "vim.leader": "<space>",
+    "vim.timeout": 200,
     "vim.handleKeys": {
         "<C-d>": true,
         "<C-s>": false,
@@ -13,7 +14,8 @@
     },
     "vim.useCtrlKeys": true,
     "vim.overrideCopy": false,
-    "vim.enableNeovim": false,
+    "vim.enableNeovim": true,
+    "vim.neovimPath": "/opt/homebrew/bin/nvim",
     "vim.relativeLineNumbers": true,
     "vim.disableExtension": false,
     "vim.insertModeKeyBindings": [
@@ -177,12 +179,20 @@
     "tabnine.experimentalAutoImports": true,
     "tabnine.codeLensEnabled": false,
     "protolint.path": "",
-    "extensions.experimental.affinity": {
-        "asvetliakov.vscode-neovim": 1
-    },
     "database-client.autoSync": true,
     "makefile.configureOnOpen": false,
     "workbench.editor.tabActionLocation": "right",
     "workbench.editor.enablePreview": false,
-    "go.toolsManagement.autoUpdate": true
+    "go.toolsManagement.autoUpdate": true,
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.rulers": [
+            80
+        ],
+        "editor.selectionHighlight": false,
+        "editor.tabCompletion": "onlySnippets",
+        "editor.wordBasedSuggestions": "off"
+    },
+    "docker.extension.enableComposeLanguageServer": false
 }
