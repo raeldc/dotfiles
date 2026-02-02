@@ -1,0 +1,25 @@
+layout {
+  default_tab_template {
+    pane size=1 borderless=true {
+      plugin location="zellij:tab-bar"
+    }
+    children
+    pane size=2 borderless=true {
+      plugin location="zellij:status-bar"
+    }
+  }
+  tab split_direction="horizontal" name="Dashboard" {
+    pane size="60%" name="status" command="htop"
+    pane size="40%" split_direction="vertical" {
+      pane size="50%" name="home" 
+      pane size="50%" name="dotfiles" cwd="~/.dotfiles"
+    }
+  }
+  tab split_direction="horizontal" name="Slop" {
+    pane split_direction="horizontal" {
+      pane size="40%" name="slopper"
+      pane size="30%" name="code"
+      pane size="30%" name="git" 
+    }
+  }
+}
