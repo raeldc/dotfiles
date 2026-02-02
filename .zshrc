@@ -1,3 +1,10 @@
+# OPENSPEC:START
+# OpenSpec shell completions configuration
+fpath=("~/.zsh/completions" $fpath)
+autoload -Uz compinit
+compinit
+# OPENSPEC:END
+
 autoload -U +X compinit && compinit
 autoload -U +X bashcompinit && bashcompinit
 
@@ -51,14 +58,19 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
 
+# devbox
+alias psmnd-cf="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev&"
+
+alias psmnd-vm="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev"
 
 # pnpm
-export PNPM_HOME="/Users/rael/Library/pnpm"
+export PNPM_HOME="/opt/homebrew/bin/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
 
-# Added by Antigravity
-export PATH="/Users/rael/.antigravity/antigravity/bin:$PATH"
+# Paths
+export PATH="~/.antigravity/antigravity/bin:$PATH"
+export PATH="$HOME/go/bin:$PATH"
