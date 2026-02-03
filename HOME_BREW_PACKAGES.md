@@ -2,7 +2,8 @@
 
 ## Formulae
 Install with `brew install --formula` or `brew install`:
-- aom
+ - ada-url
+ - aom
 - apr
 - apr-util
 - argon2
@@ -10,16 +11,19 @@ Install with `brew install --formula` or `brew install`:
 - autoconf
 - bash-completion
 - bat
+- bd
 - brotli
 - c-ares
 - ca-certificates
 - cairo
 - cjson
 - cloudflared
+- cocoapods
 - composer
 - curl
 - dav1d
 - deno
+- docker-compose
 - docker-credential-helper
 - doctl
 - elixir
@@ -31,6 +35,7 @@ Install with `brew install --formula` or `brew install`:
 - ffmpegthumbnailer
 - flac
 - flyctl
+- fmt
 - fontconfig
 - freetds
 - freetype
@@ -50,9 +55,9 @@ Install with `brew install --formula` or `brew install`:
 - gpgmepp
 - graphite2
 - harfbuzz
+- hdrhistogram_c
 - helix
 - highway
-- icu4c
 - icu4c@77
 - icu4c@78
 - imath
@@ -109,8 +114,10 @@ Install with `brew install --formula` or `brew install`:
 - libxdmcp
 - libxext
 - libxrender
+- libyaml
 - libzip
 - little-cms2
+- llhttp
 - lpeg
 - luajit
 - luv
@@ -118,10 +125,12 @@ Install with `brew install --formula` or `brew install`:
 - lzo
 - m4
 - mbedtls
+- mole
 - mpdecimal
 - mpg123
 - msgpack
 - nats
+- nats-server
 - neonctl
 - neovim
 - net-snmp
@@ -145,13 +154,16 @@ Install with `brew install --formula` or `brew install`:
 - pcre2
 - php
 - pinentry
+- pipx
 - pixman
 - pnpm
 - podman
 - poppler
 - postgresql@14
 - powerlevel10k
+- pytest
 - python@3.12
+- python@3.14
 - qrencode
 - railway
 - rav1e
@@ -159,6 +171,8 @@ Install with `brew install --formula` or `brew install`:
 - ripgrep
 - rtmpdump
 - rubberband
+- ruby
+- ruff
 - sdl2
 - simdjson
 - snappy
@@ -198,13 +212,26 @@ Install with `brew install --formula` or `brew install`:
 
 ## Casks
 Install with `brew install --cask`:
+- android-commandlinetools
+- android-platform-tools
 - bitwarden
 - claude-code
 - codex
+- copilot-cli@prerelease
+- flutter
 - font-symbols-only-nerd-font
 - macfuse
 - podman-desktop
+- warp
 - wezterm
+
+## Taps
+Ensure these taps are added before replaying installs:
+- hashicorp/tap
+- nats-io/nats-tools
+- steveyegge/beads
+- supabase/tap
+- surrealdb/tap
 
 ## Replay Instructions
 1. Install Homebrew if missing via `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`.

@@ -60,3 +60,27 @@ Insert mode escape sequences (jk, jj, kk, uu) were blocking normal typing in Cur
    - Type `jk` quickly → should escape to normal mode
    - Type `ui` normally → should insert "ui" without blocking
 3. If issues persist, check `:checkhealth` in command palette
+
+## 2026-02-03
+
+### Homebrew Inventory Refresh
+
+#### Commands Executed
+- `brew list --formula`
+- `brew list --cask`
+- `brew list --formula --full-name`
+- `brew list --cask --full-name`
+- `brew info --cask copilot-cli@prerelease`
+- `git status --short`
+- `git diff`
+- `git log -5 --oneline`
+- `git add HOME_BREW_PACKAGES.md AGENT_ACTIONS.md`
+- `git commit -m "chore(homebrew): refresh package inventory"`
+- `git pull --rebase`
+- `bd sync`
+- `git push`
+- `git status --short`
+
+#### Manual Changes
+- Updated `HOME_BREW_PACKAGES.md` to reflect current Homebrew formulae and casks.
+- Added a taps section to capture non-core Homebrew sources.
