@@ -84,3 +84,13 @@ Insert mode escape sequences (jk, jj, kk, uu) were blocking normal typing in Cur
 #### Manual Changes
 - Updated `HOME_BREW_PACKAGES.md` to reflect current Homebrew formulae and casks.
 - Added a taps section to capture non-core Homebrew sources.
+
+### Documentation
+- Expanded `README.md` with step-by-step bootstrap instructions, using `.zshrc` and shell history to enumerate required tools.
+
+### Commands Executed
+- `ls -la`
+- `ls -la .config`
+- `git status -sb`
+- `git remote -v`
+- `git log -5 --oneline`
