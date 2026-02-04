@@ -14,8 +14,7 @@
     },
     "vim.useCtrlKeys": true,
     "vim.overrideCopy": false,
-    "vim.enableNeovim": true,
-    "vim.neovimPath": "/opt/homebrew/bin/nvim",
+    "vim.enableNeovim": false,
     "vim.relativeLineNumbers": true,
     "vim.disableExtension": false,
     "vim.insertModeKeyBindings": [

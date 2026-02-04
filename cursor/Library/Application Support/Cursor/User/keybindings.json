@@ -411,17 +411,17 @@
     {
         "key": "j",
         "command": "workbench.action.quickOpenSelectNext",
-        "when": "inQuickOpen || activeViewlet == 'workbench.view.explorer'"
+        "when": "inQuickOpen || (explorerViewletVisible && filesExplorerFocus)"
     },
     {
         "key": "k",
         "command": "workbench.action.quickOpenSelectPrevious",
-        "when": "inQuickOpen || activeViewlet == 'workbench.view.explorer'"
+        "when": "inQuickOpen || (explorerViewletVisible && filesExplorerFocus)"
     },
     {
         "key": "w",
         "command": "workbench.action.closeActiveEditor",
-        "when": "inQuickOpen || activeViewlet == 'workbench.view.explorer'"
+        "when": "inQuickOpen || (explorerViewletVisible && filesExplorerFocus)"
     },
 
 
