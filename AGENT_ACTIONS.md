@@ -87,6 +87,7 @@ Insert mode escape sequences (jk, jj, kk, uu) were blocking normal typing in Cur
 
 ### Documentation
 - Expanded `README.md` with step-by-step bootstrap instructions, using `.zshrc` and shell history to enumerate required tools.
+- Removed `bd sync` from the landing-the-plane workflow in `AGENTS.md`.
 
 ### Commands Executed
 - `ls -la`
@@ -94,3 +95,96 @@ Insert mode escape sequences (jk, jj, kk, uu) were blocking normal typing in Cur
 - `git status -sb`
 - `git remote -v`
 - `git log -5 --oneline`
+
+### Bootstrap Run (README)
+
+#### Commands Executed
+- `xcode-select -p`
+- `command -v brew`
+- `eval "$(/opt/homebrew/bin/brew shellenv)"`
+- `python - <<'PY' ... PY` (attempted tap parse, python missing)
+- `python3 - <<'PY' ... PY` (extracted taps from `HOME_BREW_PACKAGES.md`)
+- `python3 - <<'PY' ... PY | xargs -n1 brew tap` (failed pipe attempt)
+- `python3 - <<'PY' ... PY | xargs -n1 brew tap` (failed pipe attempt)
+- `python3 - <<'PY' ... PY` (tap install loop)
+- `python3 - <<'PY' ... PY` (brew install formulae, timed out)
+- `python3 - <<'PY' ... PY` (brew install formulae retry, timed out)
+- `python3 - <<'PY' ... PY` (brew install casks, timed out)
+- `ls "/Users/rael"`
+- `ls "/Users/rael/.local"`
+- `mkdir -p "/Users/rael/.local/bin"`
+- `chmod +x "/Users/rael/.local/bin/env"`
+- `stow --dir="/Users/rael/.dotfiles" --target="/Users/rael" .`
+- `nvim --headless "+Lazy sync" +qa`
+- `zsh -n "/Users/rael/.zshrc" && zsh -i -c exit`
+- `python3 - <<'PY' ... PY` (brew install formulae, completed)
+- `python3 - <<'PY' ... PY` (brew install casks, checksum mismatch)
+- `ls "/Users/rael/Library/Caches/Homebrew/downloads"`
+- `rm "/Users/rael/Library/Caches/Homebrew/downloads/2c0358f5be69634ddad63bdcea7e11c51211301e6cbb16d5d422df0e72476a80--flutter_macos_arm64_3.38.9-stable.zip"`
+- `brew install --cask flutter`
+- `brew install rust`
+- `brew install --cask bitwarden font-symbols-only-nerd-font macfuse podman-desktop warp wezterm`
+- `brew install --cask bitwarden podman-desktop warp wezterm`
+
+#### Manual Changes
+- Created `~/.local/bin/env` and made it executable.
+- Linked dotfiles into `$HOME` using GNU Stow.
+
+#### Notes
+- `brew install --cask flutter` hit a checksum mismatch, then timed out on re-download.
+- `brew install --cask macfuse` failed because sudo requires an interactive terminal.
+- `zsh -n ~/.zshrc && zsh -i -c exit` returned `can't change option: zle`.
+
+## 2026-02-04
+
+### Rust Toolchain Install
+
+#### Commands Executed
+- `command -v rustup`
+- `command -v cargo`
+- `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y`
+
+#### Manual Changes
+- Installed rustup-managed Rust toolchain and cargo in `~/.cargo`.
+
+### Zellij Install
+
+#### Commands Executed
+- `brew install zellij`
+
+### Alacritty Font Size
+
+#### Commands Executed
+- `ls`
+- `ls ".config"`
+- `stow --dir="/Users/rael/.dotfiles" --target="/Users/rael" .`
+
+#### Manual Changes
+- Added `~/.config/alacritty/alacritty.toml` with a larger font size.
+
+### Ghostty Config
+
+#### Commands Executed
+- `stow --dir="/Users/rael/.dotfiles" --target="/Users/rael" .`
+
+#### Manual Changes
+- Added `~/.config/ghostty/config` aligned with WezTerm colors, font, and opacity.
+
+### Ghostty Option/Alt
+
+#### Commands Executed
+- `stow --dir="/Users/rael/.dotfiles" --target="/Users/rael" .`
+
+#### Manual Changes
+- Set `macos-option-as-alt = true` in `~/.config/ghostty/config`.
+
+### Stow Ignore
+
+#### Manual Changes
+- Added `.stow-local-ignore` to skip `*.md` files and docs directories.
+
+### SSH Key Move
+
+#### Commands Executed
+- `ls "/Users/rael/.ssh"`
+- `mv "rael.devbox" "/Users/rael/.ssh/rael.devbox" && mv "rael.devbox.pub" "/Users/rael/.ssh/rael.devbox.pub"`
