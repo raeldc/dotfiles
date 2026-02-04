@@ -220,14 +220,18 @@
   "casks": [
     "android-commandlinetools",
     "android-platform-tools",
+    "apidog",
     "bitwarden",
     "claude-code",
     "codex",
     "copilot-cli@prerelease",
+    "cursor",
     "flutter",
     "font-symbols-only-nerd-font",
     "macfuse",
+    "obsidian",
     "podman-desktop",
+    "visual-studio-code",
     "warp",
     "wezterm"
   ]
