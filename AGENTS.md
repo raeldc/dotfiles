@@ -19,6 +19,7 @@ Use this to jump straight to the right file for common instructions.
 - Zed: `.config/zed/`
 - Alacritty: `.config/alacritty/`
 - Ghostty: `.config/ghostty/`
+- OpenCode: `.config/opencode/`
 - Cursor: `cursor/Library/Application Support/Cursor/User/`
 - JetBrains GoLand: `jetbrains/Library/Application Support/JetBrains/GoLand2025.2/`
 - Antigravity: `antigravity/`
