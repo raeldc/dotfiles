@@ -1,0 +1,16 @@
+\.DS_Store
+\.git
+\.gitignore
+\.github
+\.gitmodules
+\.idea
+\.vscode
+\.editorconfig
+\.env
+\.envrc
+\.mise\.toml
+\.tool-versions
+
+.*\.md
+docs
+documentation
