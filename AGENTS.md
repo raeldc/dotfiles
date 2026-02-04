@@ -49,6 +49,7 @@ Homebrew is the preferred package manager on both macOS and Linux.
 
 ## Package Manifest
 The package source of truth is `manifests/homebrew.json`. Do not edit generated lists in other files.
+When installing software, prefer Homebrew first, then update `manifests/homebrew.json` to match the change.
 
 Install commands (macOS):
 ```sh
