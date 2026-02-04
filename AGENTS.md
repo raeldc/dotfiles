@@ -18,14 +18,14 @@ Homebrew is the preferred package manager on both macOS and Linux.
    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 3. Ensure Homebrew on PATH: `eval "$(/opt/homebrew/bin/brew shellenv)"`
 4. Install packages from `manifests/homebrew.json` (see Install Commands below)
-5. Link dotfiles into `$HOME` with `stow` or manual symlinks
+5. Link dotfiles into `$HOME` using GNU Stow (see Linking Dotfiles)
 
 ### Linux
 1. Install Homebrew (Linuxbrew) first:
    `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 2. Ensure Homebrew on PATH (Linuxbrew install output provides the eval line)
 3. Install packages from `manifests/homebrew.json` (formulae only; skip casks)
-4. Link dotfiles into `$HOME` with `stow` or manual symlinks
+4. Link dotfiles into `$HOME` using GNU Stow (see Linking Dotfiles)
 5. If a dependency is missing for Homebrew itself, use the system package manager only to satisfy that prerequisite, then revert to Homebrew
 
 ## Package Manifest
@@ -45,7 +45,7 @@ bin/brew-install --formulae
 ```
 
 ## Linking Dotfiles
-Preferred: GNU Stow.
+Use GNU Stow for all dotfile linking.
 ```sh
 stow --dir="$HOME/.dotfiles" --target="$HOME" .
 ```
@@ -69,9 +69,6 @@ Run the checks that match your changes:
 - Aliases: lowercase
 - Scripts: kebab-case and single-purpose
 - Guard optional tooling with `command -v <tool> >/dev/null || return`
-
-## Activity Tracking
-Record every command and manual step in `AGENT_ACTIONS.md`.
 
 ## Commit Style
 Conventional Commits with scopes, e.g. `chore(shell): update zshrc`. Keep subjects imperative and <70 chars.
