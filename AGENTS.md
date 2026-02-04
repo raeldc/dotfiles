@@ -9,6 +9,24 @@ Dotfiles mirror `$HOME` via symlinks. Root shell entrypoints live at the repo ro
 - Editor/terminal configs: `.config/nvim/`, `.config/zed/`, `.config/zellij/`, `.config/alacritty/`, `.config/ghostty/`
 - Helper scripts: `bin/` (single-purpose scripts, kebab-case)
 
+## Config Quick Map
+Use this to jump straight to the right file for common instructions.
+- Shell startup: `.zshrc`, `.zprofile`, `.zshenv`, `.profile`, `.bash_profile`
+- Shell prompt/theme: `.p10k.zsh`
+- WezTerm: `.wezterm.lua`
+- Zellij: `.config/zellij/`
+- Neovim: `.config/nvim/`
+- Zed: `.config/zed/`
+- Alacritty: `.config/alacritty/`
+- Ghostty: `.config/ghostty/`
+- Cursor: `cursor/Library/Application Support/Cursor/User/`
+- JetBrains GoLand: `jetbrains/Library/Application Support/JetBrains/GoLand2025.2/`
+- Antigravity: `antigravity/`
+- Gemini: `.gemini/`
+- Kilocode: `.kilocode/`
+- Helper scripts: `bin/`
+- Local-only env: `~/.local/bin/env`
+
 ## OS-Specific Bootstrap
 Homebrew is the preferred package manager on both macOS and Linux.
 
