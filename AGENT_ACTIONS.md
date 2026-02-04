@@ -188,3 +188,30 @@ Insert mode escape sequences (jk, jj, kk, uu) were blocking normal typing in Cur
 #### Commands Executed
 - `ls "/Users/rael/.ssh"`
 - `mv "rael.devbox" "/Users/rael/.ssh/rael.devbox" && mv "rael.devbox.pub" "/Users/rael/.ssh/rael.devbox.pub"`
+
+### Git Identity Update
+
+#### Commands Executed
+- `git config user.name "rael" && git config user.email "rael@lear.one" && git config --global user.name "rael" && git config --global user.email "rael@psmnd.dev"`
+
+### Re-author Recent Commits
+
+#### Commands Executed
+- `git rebase --rebase-merges --exec "git commit --amend --no-edit --author='rael <rael@lear.one>'" HEAD~3`
+- `git rebase --rebase-merges --autostash --exec "git commit --amend --no-edit --author='rael <rael@lear.one>'" HEAD~3`
+
+### Agent Onboarding Reorg
+
+#### Commands Executed
+- `ls`
+- `ls -a`
+- `ls ".config"`
+- `chmod +x "/Users/rael/.dotfiles/bin/brew-install"`
+
+#### Manual Changes
+- Rewrote `AGENTS.md` as the canonical onboarding guide and removed redundant sections.
+- Added `manifests/homebrew.json` as the machine-readable package manifest.
+- Added `bin/brew-install` helper for manifest-driven Homebrew installs.
+- Added setup docs under `docs/setup/` and local-only contract at `docs/local/README.md`.
+- Updated `README.md` to point to the new guides and manifest.
+- Deleted `CLAUDE.md`, `WARP.md`, and `HOME_BREW_PACKAGES.md`.

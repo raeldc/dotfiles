@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+manifest_path="${BREW_MANIFEST:-$HOME/.dotfiles/manifests/homebrew.json}"
+
+usage() {
+  cat <<'EOF'
+Usage: brew-install [--taps] [--formulae] [--casks] [--all] [--manifest PATH]
+
+Options:
+  --taps       Install Homebrew taps from the manifest
+  --formulae   Install formulae from the manifest
+  --casks      Install casks from the manifest (macOS only)
+  --all        Install taps, formulae, and casks
+  --manifest   Override manifest path (default: $HOME/.dotfiles/manifests/homebrew.json)
+EOF
+}
+
+if [[ ${1:-} == "" ]]; then
+  usage
+  exit 1
+fi
+
+if ! command -v brew >/dev/null; then
+  echo "brew not found on PATH" >&2
+  exit 1
+fi
+
+if ! command -v python3 >/dev/null; then
+  echo "python3 not found on PATH" >&2
+  exit 1
+fi
+
+if [[ ! -f "$manifest_path" ]]; then
+  echo "Manifest not found: $manifest_path" >&2
+  exit 1
+fi
+
+read_manifest() {
+  python3 - "$manifest_path" "$1" <<'PY'
+import json
+import sys
+
+path = sys.argv[1]
+key = sys.argv[2]
+with open(path, "r", encoding="utf-8") as handle:
+  data = json.load(handle)
+
+for item in data.get(key, []):
+  print(item)
+PY
+}
+
+install_taps() {
+  mapfile -t taps < <(read_manifest taps)
+  if [[ ${#taps[@]} -eq 0 ]]; then
+    return 0
+  fi
+  for tap in "${taps[@]}"; do
+    brew tap "$tap"
+  done
+}
+
+install_formulae() {
+  mapfile -t formulae < <(read_manifest formulae)
+  if [[ ${#formulae[@]} -eq 0 ]]; then
+    return 0
+  fi
+  brew install "${formulae[@]}"
+}
+
+install_casks() {
+  mapfile -t casks < <(read_manifest casks)
+  if [[ ${#casks[@]} -eq 0 ]]; then
+    return 0
+  fi
+  brew install --cask "${casks[@]}"
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --taps)
+      install_taps
+      ;;
+    --formulae)
+      install_formulae
+      ;;
+    --casks)
+      install_casks
+      ;;
+    --all)
+      install_taps
+      install_formulae
+      install_casks
+      ;;
+    --manifest)
+      manifest_path="$2"
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage
+      exit 1
+      ;;
+  esac
+  shift
+done

@@ -1,51 +1,77 @@
-# Repository Guidelines
+# Agent Onboarding Guide
 
-## Project Structure & Module Organization
-Dotfiles mirror macOS $HOME via symlinks. Root-level shell entrypoints (.zshrc, .zprofile, .zshenv, .profile, .bash_profile) sit beside UI configs like .wezterm.lua and .p10k.zsh. Editor and terminal assets live under .config/: nvim/ (NvChad Lua modules inside lua/), zed/ (settings.json, keymap.json, themes/), and zellij/ (KDL layouts). CLI helpers belong in bin/ (e.g., bin/goland); keep scripts single-purpose and document new binaries here or in CLAUDE.md.
+This is the canonical agent guide for this repo. Follow it as the source of truth.
 
-## Build, Test & Development Commands
-- `nvim --headless "+Lazy sync" +qa` verifies plugin specs in `.config/nvim/lua/plugins` after dependency tweaks.
-- `zsh -n .zshrc && zsh -i -c exit` syntax-checks the profile, then ensures Powerlevel10k, fzf, and path exports still load in an interactive shell.
-- `jq . .config/zed/settings.json` (repeat for other JSON) enforces formatting for Zed artifacts.
-- `rg "<term>" -n` / `rg --files` should be your default search across duplicated configs; skip slower `find`+`grep` chains.
+## Repository Map
+Dotfiles mirror `$HOME` via symlinks. Root shell entrypoints live at the repo root; app configs live in `.config/`.
+- Shell: `.zshrc`, `.zprofile`, `.zshenv`, `.profile`, `.bash_profile`
+- Terminal/UI: `.wezterm.lua`, `.p10k.zsh`
+- Editor/terminal configs: `.config/nvim/`, `.config/zed/`, `.config/zellij/`, `.config/alacritty/`, `.config/ghostty/`
+- Helper scripts: `bin/` (single-purpose scripts, kebab-case)
 
-## Coding Style & Naming Conventions
-Use two-space indents in shell blocks, tabs in Lua (NvChad + WezTerm defaults), and prettified JSON with trailing newlines for Zed. Keep environment variables uppercase snake_case (`NVM_DIR`), aliases lowercase (`fvim`, `docker-start`), and script names dashed (`bin/colima-start`). Guard optional tooling with `command -v` checks and add comments only when behavior is non-obvious.
+## OS-Specific Bootstrap
+Homebrew is the preferred package manager on both macOS and Linux.
 
-## Testing & Validation Guidelines
-Shell edits: run `shellcheck <file>` plus a fresh terminal session to verify prompts and PATH changes. Neovim tweaks: open `nvim`, run `:checkhealth`, and note Mason/Treesitter status if you touched LSP or plugins. For terminal configs (WezTerm, Zellij), restart the app/session and capture regressions or screenshots whenever keymaps or palettes move. Document any manual migration (e.g., `stow` commands) in AGENTS.md for future passes.
+### macOS
+1. Install Xcode CLT: `xcode-select --install`
+2. Install Homebrew (if missing):
+   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+3. Ensure Homebrew on PATH: `eval "$(/opt/homebrew/bin/brew shellenv)"`
+4. Install packages from `manifests/homebrew.json` (see Install Commands below)
+5. Link dotfiles into `$HOME` with `stow` or manual symlinks
 
-## Commit & Pull Request Guidelines
-Commits follow Conventional Commits with scopes (`feat(zed): …`, `chore(shell): …`); keep subjects imperative and under ~70 chars. Group related config files so symlink updates stay atomic and avoid mixing shell + editor tweaks unless dependent. PRs should list touched paths, verification commands, screenshots for visual tweaks, and mention new dependencies (Homebrew, npm, Cargo) with install notes.
+### Linux
+1. Install Homebrew (Linuxbrew) first:
+   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+2. Ensure Homebrew on PATH (Linuxbrew install output provides the eval line)
+3. Install packages from `manifests/homebrew.json` (formulae only; skip casks)
+4. Link dotfiles into `$HOME` with `stow` or manual symlinks
+5. If a dependency is missing for Homebrew itself, use the system package manager only to satisfy that prerequisite, then revert to Homebrew
 
-## Security & Configuration Tips
-Keep secrets or machine-specific tokens out of Git; use ignored `.local` files or the macOS keychain. Wrap new tooling in guards (`command -v uv >/dev/null || return`) so clean machines do not fail during login, and record any extra bootstrap steps in this guide.
+## Package Manifest
+The package source of truth is `manifests/homebrew.json`. Do not edit generated lists in other files.
+
+Install commands (macOS):
+```sh
+bin/brew-install --taps
+bin/brew-install --formulae
+bin/brew-install --casks
+```
+
+Install commands (Linux):
+```sh
+bin/brew-install --taps
+bin/brew-install --formulae
+```
+
+## Linking Dotfiles
+Preferred: GNU Stow.
+```sh
+stow --dir="$HOME/.dotfiles" --target="$HOME" .
+```
+
+## Local-Only Files
+Keep secrets and machine-specific config out of Git. Use `~/.local/bin/env` for per-machine exports.
+See `docs/local/README.md` for the contract and examples.
+
+## Verification Matrix
+Run the checks that match your changes:
+- Shell files: `shellcheck <file>` and `zsh -n .zshrc && zsh -i -c exit`
+- Neovim plugins: `nvim --headless "+Lazy sync" +qa`
+- Zed JSON: `jq . .config/zed/settings.json`
+- WezTerm/Zellij: restart the app/session and confirm keymaps + colors
+
+## Coding Conventions
+- Shell: 2-space indent
+- Lua (Neovim/WezTerm): tabs
+- JSON: formatted with trailing newline
+- Env vars: `UPPERCASE_SNAKE_CASE`
+- Aliases: lowercase
+- Scripts: kebab-case and single-purpose
+- Guard optional tooling with `command -v <tool> >/dev/null || return`
 
 ## Activity Tracking
-- Record every command and manual step in `AGENT_ACTIONS.md` so the workflow can be replayed on a fresh machine.
+Record every command and manual step in `AGENT_ACTIONS.md`.
 
-## Landing the Plane (Session Completion)
-
-**When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
-
-**MANDATORY WORKFLOW:**
-
-1. **File issues for remaining work** - Create issues for anything that needs follow-up
-2. **Run quality gates** (if code changed) - Tests, linters, builds
-3. **Update issue status** - Close finished work, update in-progress items
-4. **PUSH TO REMOTE** - This is MANDATORY:
-   ```bash
-   git pull --rebase
-   bd sync
-   git push
-   git status  # MUST show "up to date with origin"
-   ```
-5. **Clean up** - Clear stashes, prune remote branches
-6. **Verify** - All changes committed AND pushed
-7. **Hand off** - Provide context for next session
-
-**CRITICAL RULES:**
-- Work is NOT complete until `git push` succeeds
-- NEVER stop before pushing - that leaves work stranded locally
-- NEVER say "ready to push when you are" - YOU must push
-- If push fails, resolve and retry until it succeeds
+## Commit Style
+Conventional Commits with scopes, e.g. `chore(shell): update zshrc`. Keep subjects imperative and <70 chars.
