@@ -242,5 +242,6 @@
     ],
     "kilo-code.deniedCommands": [],
     "containers.containerClient": "com.microsoft.visualstudio.containers.podman",
-    "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.podmancompose"
+    "containers.orchestratorClient": "com.microsoft.visualstudio.orchestrators.podmancompose",
+    "github.copilot.nextEditSuggestions.enabled": true
 }
