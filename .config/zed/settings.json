@@ -7,26 +7,19 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "git_panel": {
+    "tree_view": true
+  },
+  "terminal": {
+    "dock": "right",
+    "option_as_meta": true
+  },
   "language_models": {
     "openai_compatible": {
       "Zen": {
         "api_url": "https://opencode.ai/zen/v1",
         "available_models": [
-          {
-            "name": "kimi-k2.5-free",
-            "display_name": "Kimi 2.5 (free)",
-            "max_tokens": 262144,
-            "max_output_tokens": 65535,
-            "max_completion_tokens": 262144,
-            "capabilities": {
-              "tools": true,
-              "images": true,
-              "parallel_tool_calls": false,
-              "prompt_cache_key": false,
-              "chat_completions": true
-            }
-          },
-          {
+         {
             "name": "kimi-k2.5",
             "display_name": "Kimi 2.5",
             "max_tokens": 262144,
@@ -35,20 +28,6 @@
             "capabilities": {
               "tools": true,
               "images": true,
-              "parallel_tool_calls": false,
-              "prompt_cache_key": false,
-              "chat_completions": true
-            }
-          },
-          {
-            "name": "glm-4.7-free",
-            "display_name": "GLM 4.7 (free)",
-            "max_tokens": 202752,
-            "max_output_tokens": 65535,
-            "max_completion_tokens": 202752,
-            "capabilities": {
-              "tools": true,
-              "images": false,
               "parallel_tool_calls": false,
               "prompt_cache_key": false,
               "chat_completions": true
@@ -77,6 +56,13 @@
       "type": "registry"
     },
     "github-copilot": {
+      "favorite_models": [
+        "gpt-5.2-codex",
+        "gpt-5.2",
+        "claude-haiku-4.5",
+        "gpt-5.1-codex-mini",
+        "grok-code-fast-1"
+      ],
       "type": "registry"
     }
   },
@@ -140,15 +126,7 @@
       },
       {
         "provider": "openrouter",
-        "model": "anthropic/claude-opus-4.5"
-      },
-      {
-        "provider": "openrouter",
         "model": "minimax/minimax-m2.1"
-      },
-      {
-        "provider": "Zen",
-        "model": "kimi-k2.5-free"
       },
       {
         "provider": "Zen",
@@ -156,19 +134,19 @@
       },
       {
         "provider": "Zen",
-        "model": "glm-4.7-free"
-      },
-      {
-        "provider": "Zen",
         "model": "glm-4.7"
       },
       {
         "provider": "copilot_chat",
-        "model": "claude-opus-4.5"
+        "model": "grok-code-fast-1"
+      },
+      {
+        "provider": "openrouter",
+        "model": "anthropic/claude-opus-4.6"
       },
       {
         "provider": "copilot_chat",
-        "model": "grok-code-fast-1"
+        "model": "gpt-5.1-codex-mini"
       }
     ],
     "dock": "right",
@@ -188,8 +166,8 @@
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "Zen",
-      "model": "kimi-k2.5"
+      "provider": "copilot_chat",
+      "model": "gpt-5.2-codex"
     }
   },
   "base_keymap": "VSCode",
