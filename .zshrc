@@ -64,7 +64,7 @@ alias psmnd-cf="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psm
 alias psmnd-vm="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev"
 
 # pnpm
-export PNPM_HOME="/opt/homebrew/bin/pnpm"
+export PNPM_HOME="$HOME/l/homebrew/bin/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
@@ -74,3 +74,5 @@ esac
 # Paths
 export PATH="~/.antigravity/antigravity/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
+
+
