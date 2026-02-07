@@ -4,3 +4,4 @@ lock.mdb
 !.config/zed/themes
 !.config/zed/*.json
 .p10k.zsh.swp
+.codex/log/
