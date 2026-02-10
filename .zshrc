@@ -76,3 +76,10 @@ export PATH="~/.antigravity/antigravity/bin:$PATH"
 export PATH="$HOME/go/bin:$PATH"
 
 
+
+# bun completions
+[ -s "/Users/rael/.bun/_bun" ] && source "/Users/rael/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
