@@ -5,3 +5,4 @@ lock.mdb
 !.config/zed/*.json
 .p10k.zsh.swp
 .codex
+.gemini

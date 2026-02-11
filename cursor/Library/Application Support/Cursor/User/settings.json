@@ -236,7 +236,7 @@
         "tail",
         "sed",
         "sed -i  s/azure_theme\\.dart # Azure theme extension/gaia_theme.dart # Gaia theme extension\\n│   │   │   │   ├── zen_theme.dart # Zen theme extension/ .kilocode/rules/memory-bank/architecture.md",
-        "cd /Users/rael/Projects/c-corp/a-pos/libs/fltr/zen/example",
+        "cd ~/Projects/c-corp/a-pos/libs/fltr/zen/example",
         "flutter run -d N92 2>&1",
         "flutter run"
     ],
