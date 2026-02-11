@@ -11,6 +11,7 @@
     "aom",
     "apr",
     "apr-util",
+    "appium",
     "argon2",
     "aribb24",
     "autoconf",
