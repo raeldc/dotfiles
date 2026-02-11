@@ -11,7 +11,7 @@
     "tree_view": true
   },
   "terminal": {
-    "dock": "right",
+    "dock": "bottom",
     "option_as_meta": true
   },
   "language_models": {

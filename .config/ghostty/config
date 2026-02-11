@@ -37,5 +37,5 @@ keybind = alt+shift+j=new_split:down
 keybind = alt+shift+l=new_split:right
 keybind = alt+shift+"=new_split:down
 keybind = alt+shift+%=new_split:right
-keybind = alt+bracket_left=previous_tab
-keybind = alt+bracket_right=next_tab
+keybind = alt+shift+bracket_left=previous_tab
+keybind = alt+shift+bracket_right=next_tab
