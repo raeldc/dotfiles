@@ -120,7 +120,7 @@
 
   // Tab/Shift-Tab for next/previous buffer (alternative to alt-[/])
   {
-    "context": "Workspace",
+    "context": "Workspace && !Terminal",
     "bindings": {
       "tab": "pane::ActivateNextItem",
       "shift-tab": "pane::ActivatePreviousItem"
