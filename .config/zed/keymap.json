@@ -312,6 +312,13 @@
   // GIT
   // ============================================================================
 
+  // Cmd-Shift-G to toggle git panel (macOS)
+  {
+    "bindings": {
+      "cmd-shift-g": "git_panel::ToggleFocus"
+    }
+  },
+
   // Leader gt to toggle git blame
   {
     "context": "Editor && vim_mode == normal",

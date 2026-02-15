@@ -8,6 +8,7 @@
 // from the command palette or from `Zed` application menu.
 {
   "git_panel": {
+    "dock": "right",
     "tree_view": true
   },
   "terminal": {
@@ -83,6 +84,23 @@
   },
   "ui_font_family": ".ZedSans",
   "context_servers": {
+    "auggie": {
+      "enabled": true,
+      "url": "https://api.augmentcode.com/mcp",
+      "headers": {
+        "Authorization": "Bearer 6655cf113bb155dd68c40bd6f2cc998a326fda92c578fc0e6ba47c590af56c50"
+      }
+    },
+    "Augment-Context-Engine": {
+      "enabled": true,
+      "remote": false,
+      "command": "auggie",
+      "args": [
+        "--mcp",
+        "--mcp-auto-workspace"
+      ],
+      "env": {}
+    },
     "mcp-server-nextjs": {
       "enabled": false,
       "command": "npx",
@@ -94,11 +112,7 @@
       "args": ["shadcn@latest", "mcp"]
     }
   },
-  "edit_predictions": {
-    "provider": "zed",
-    "mode": "eager"
-  },
-  "show_edit_predictions": true,
+  "show_edit_predictions": false,
   "completions": {
     "lsp": true
   },
@@ -166,8 +180,8 @@
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "gpt-5.2-codex"
+      "provider": "Zen",
+      "model": "kimi-k2.5"
     }
   },
   "base_keymap": "VSCode",
