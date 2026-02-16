@@ -92,3 +92,5 @@ Run the checks that match your changes:
 
 ## Commit Style
 Conventional Commits with scopes, e.g. `chore(shell): update zshrc`. Keep subjects imperative and <70 chars.
+
+When committing multiple changes, group them logically into separate commits by theme rather than lumping unrelated changes together.
