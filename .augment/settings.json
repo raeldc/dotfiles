@@ -3,5 +3,6 @@
     "~/projects/pisomind/main",
     "/Users/rael/projects/pisomind/main"
   ],
-  "vimMode": true
+  "vimMode": true,
+  "model": "sonnet4.6"
 }

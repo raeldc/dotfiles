@@ -84,13 +84,6 @@
   },
   "ui_font_family": ".ZedSans",
   "context_servers": {
-    "auggie": {
-      "enabled": true,
-      "url": "https://api.augmentcode.com/mcp",
-      "headers": {
-        "Authorization": "Bearer 6655cf113bb155dd68c40bd6f2cc998a326fda92c578fc0e6ba47c590af56c50"
-      }
-    },
     "Augment-Context-Engine": {
       "enabled": true,
       "remote": false,
@@ -131,40 +124,33 @@
   "agent": {
     "favorite_models": [
       {
-        "provider": "copilot_chat",
-        "model": "gpt-5.2"
-      },
-      {
-        "provider": "copilot_chat",
-        "model": "gpt-5.2-codex"
-      },
-      {
         "provider": "openrouter",
-        "model": "minimax/minimax-m2.1"
+        "model": "minimax/minimax-m2.1",
+        "enable_thinking": false
       },
       {
         "provider": "Zen",
-        "model": "kimi-k2.5"
+        "model": "kimi-k2.5",
+        "enable_thinking": false
       },
       {
         "provider": "Zen",
-        "model": "glm-4.7"
-      },
-      {
-        "provider": "copilot_chat",
-        "model": "grok-code-fast-1"
+        "model": "glm-4.7",
+        "enable_thinking": false
       },
       {
         "provider": "openrouter",
-        "model": "anthropic/claude-opus-4.6"
+        "model": "anthropic/claude-opus-4.6",
+        "enable_thinking": false
       },
       {
         "provider": "copilot_chat",
-        "model": "gpt-5.1-codex-mini"
+        "model": "gpt-5.2-codex",
+        "enable_thinking": false
       }
     ],
     "dock": "right",
-    "default_profile": "write",
+    "default_profile": "ask",
     "profiles": {
       "cautious": {
         "name": "Cautious",
@@ -180,8 +166,8 @@
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "Zen",
-      "model": "kimi-k2.5"
+      "provider": "copilot_chat",
+      "model": "gpt-5.2"
     }
   },
   "base_keymap": "VSCode",
