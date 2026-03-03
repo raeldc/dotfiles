@@ -8,3 +8,4 @@ lock.mdb
 .gemini
 .augment/*
 !.augment/settings.json
+.env

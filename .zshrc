@@ -83,3 +83,11 @@ export PATH="$HOME/go/bin:$PATH"
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Load dotfiles .env (gitignored, machine-local)
+if [[ -f "$HOME/.dotfiles/.env" ]]; then
+  set -a
+  # shellcheck source=/dev/null
+  source "$HOME/.dotfiles/.env"
+  set +a
+fi
