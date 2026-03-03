@@ -62,12 +62,12 @@ config.keys = {
   },
   {
     key = '[',
-    mods = 'ALT',
+    mods = 'ALT|SHIFT',
     action = act.ActivateTabRelative(-1)
   },
   {
     key = ']',
-    mods = 'ALT',
+    mods = 'ALT|SHIFT',
     action = act.ActivateTabRelative(1)
   }
 }
