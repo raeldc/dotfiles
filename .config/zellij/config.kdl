@@ -3,6 +3,7 @@ keybinds {
     normal {
         // uncomment this and adjust key if using copy_on_select=false
         // bind "Alt c" { Copy; }
+        bind "Ctrl z" { SwitchToMode "Pane"; }
     }
     locked {
         bind "Ctrl g" { SwitchToMode "Normal"; }
@@ -36,6 +37,13 @@ keybinds {
         bind "w" { ToggleFloatingPanes; SwitchToMode "Normal"; }
         bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Normal"; }
         bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0;}
+        bind "[" { GoToPreviousTab; SwitchToMode "Normal"; }
+        bind "]" { GoToNextTab; SwitchToMode "Normal"; }
+        bind "i" { MoveTab "Left"; SwitchToMode "Normal"; }
+        bind "o" { MoveTab "Right"; SwitchToMode "Normal"; }
+        bind "=" "+" { Resize "Increase"; SwitchToMode "Normal"; }
+        bind "-" { Resize "Decrease"; SwitchToMode "Normal"; }
+        bind "Esc" { SwitchToMode "Normal"; }
     }
     move {
         bind "Ctrl h" { SwitchToMode "Normal"; }
@@ -147,17 +155,10 @@ keybinds {
     shared_except "locked" {
         bind "Ctrl g" { SwitchToMode "Locked"; }
         bind "Ctrl q" { Quit; }
-        bind "Alt n" { NewPane; }
-        bind "Alt i" { MoveTab "Left"; }
-        bind "Alt o" { MoveTab "Right"; }
-        bind "Alt h" "Alt Left" { MoveFocusOrTab "Left"; }
-        bind "Alt l" "Alt Right" { MoveFocusOrTab "Right"; }
-        bind "Alt j" "Alt Down" { MoveFocus "Down"; }
-        bind "Alt k" "Alt Up" { MoveFocus "Up"; }
-        bind "Alt =" "Alt +" { Resize "Increase"; }
-        bind "Alt -" { Resize "Decrease"; }
         bind "Alt [" { GoToPreviousTab; }
         bind "Alt ]" { GoToNextTab; }
+        unbind "Alt Left"
+        unbind "Alt Right"
     }
     shared_except "normal" "locked" {
         bind "Enter" "Esc" { SwitchToMode "Normal"; }
