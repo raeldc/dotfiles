@@ -4,6 +4,9 @@
 
 complete -C /opt/homebrew/bin/terraform terraform
 
+# podman as docker drop-in replacement
+alias docker='podman'
+
 # Load dotfiles .env (gitignored, machine-local)
 if [ -f "$HOME/.dotfiles/.env" ]; then
   set -a

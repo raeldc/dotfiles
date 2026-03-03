@@ -50,6 +50,9 @@ alias lzd='lazydocker'
 # colima
 alias docker-start='colima start --mount-type 9p'
 
+# podman as docker drop-in replacement
+alias docker='podman'
+
 eval "$(zoxide init --cmd cd zsh)"
 
 . "$HOME/.local/bin/env"
