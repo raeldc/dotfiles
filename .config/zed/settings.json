@@ -53,6 +53,15 @@
     }
   },
   "agent_servers": {
+    "github-copilot-cli": {
+      "type": "registry"
+    },
+    "kilo": {
+      "type": "registry"
+    },
+    "cursor": {
+      "type": "registry"
+    },
     "opencode": {
       "type": "registry"
     },
@@ -84,16 +93,6 @@
   },
   "ui_font_family": ".ZedSans",
   "context_servers": {
-    "Augment-Context-Engine": {
-      "enabled": true,
-      "remote": false,
-      "command": "auggie",
-      "args": [
-        "--mcp",
-        "--mcp-auto-workspace"
-      ],
-      "env": {}
-    },
     "mcp-server-nextjs": {
       "enabled": false,
       "command": "npx",

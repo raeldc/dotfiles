@@ -21,7 +21,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 EDITOR='nvim'
 
 # fzf
-source <(fzf --zsh)
+command -v fzf >/dev/null && source <(fzf --zsh)
 alias fvim='nvim $(fzf -m --preview="bat --color=always {}")'
 
 # Load Angular CLI autocompletion.
@@ -53,8 +53,6 @@ alias docker-start='colima start --mount-type 9p'
 # podman as docker drop-in replacement
 alias docker='podman'
 export DOCKER_HOST="unix://${TMPDIR}podman/podman-machine-default-api.sock"
-
-eval "$(zoxide init --cmd cd zsh)"
 
 . "$HOME/.local/bin/env"
 
@@ -95,3 +93,8 @@ if [[ -f "$HOME/.dotfiles/.env" ]]; then
   source "$HOME/.dotfiles/.env"
   set +a
 fi
+
+# opencode
+export PATH=/Users/rael/.opencode/bin:$PATH
+
+command -v zoxide >/dev/null && eval "$(zoxide init --cmd cd zsh)"

@@ -461,5 +461,10 @@
         "key": "space t t",
         "command": "workbench.action.terminal.toggleTerminal",
         "when": "editorTextFocus && vim.mode == 'Normal'"
+    },
+    {
+        "key": "alt+cmd+s",
+        "command": "workbench.action.toggleUnifiedSidebarFromKeyboard",
+        "when": "cursor.agentIdeUnification.enabled == true && !isAuxiliaryWindowFocusedContext"
     }
 ]

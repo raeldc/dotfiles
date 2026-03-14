@@ -242,6 +242,7 @@
     "codex",
     "copilot-cli@prerelease",
     "cursor",
+    "flutter",
     "font-meslo-lg-nerd-font",
     "font-symbols-only-nerd-font",
     "ghostty",
@@ -250,7 +251,6 @@
     "podman-desktop",
     "raycast",
     "visual-studio-code",
-    "warp",
     "wezterm",
     "zed"
   ]
