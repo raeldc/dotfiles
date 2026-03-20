@@ -161,8 +161,7 @@ keybinds {
         unbind "Alt Right"
     }
     shared {
-        unbind "Alt Right"
-        unbind "Alt Left"
+        unbind "Alt f"
     }
     shared_except "normal" "locked" {
         bind "Enter" "Esc" { SwitchToMode "Normal"; }
