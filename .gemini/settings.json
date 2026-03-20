@@ -7,14 +7,5 @@
       "selectedType": "oauth-personal"
     }
   },
-  "mcpServers": {
-    "pencil": {
-      "command": "/Users/rael/.cursor/extensions/highagency.pencildev-0.6.29-universal/out/mcp-server-darwin-arm64",
-      "args": [
-        "--app",
-        "cursor"
-      ],
-      "env": {}
-    }
-  }
+  "mcpServers": {}
 }
