@@ -93,3 +93,5 @@ export PATH=/Users/rael/.opencode/bin:$PATH
 # Disable false-positive warning in snapshot-restored shells (e.g. Claude Code)
 export _ZO_DOCTOR=0
 command -v zoxide >/dev/null && eval "$(zoxide init --cmd cd zsh)"
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
