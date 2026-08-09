@@ -7,5 +7,46 @@
       "selectedType": "oauth-personal"
     }
   },
-  "mcpServers": {}
+  "mcpServers": {
+    "pencil": {
+      "command": "/Users/rael/.pencil/mcp/cursor/out/mcp-server-darwin-arm64",
+      "args": [
+        "--app",
+        "cursor"
+      ],
+      "env": {}
+    }
+  },
+  "hooks": {
+    "BeforeAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/rael/.superset/hooks/gemini-hook.sh"
+          }
+        ]
+      }
+    ],
+    "AfterAgent": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/rael/.superset/hooks/gemini-hook.sh"
+          }
+        ]
+      }
+    ],
+    "AfterTool": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/rael/.superset/hooks/gemini-hook.sh"
+          }
+        ]
+      }
+    ]
+  }
 }

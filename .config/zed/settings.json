@@ -7,12 +7,24 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
+  "diff_view_style": "split",
+  "cli_default_open_behavior": "existing_window",
+  "project_panel": {
+    "entry_spacing": "comfortable",
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "right"
+  },
+  "collaboration_panel": {
+    "dock": "right"
+  },
   "git_panel": {
     "dock": "right",
     "tree_view": true
   },
   "terminal": {
-    "dock": "bottom",
+    "dock": "left",
     "option_as_meta": true
   },
   "language_models": {
@@ -53,10 +65,10 @@
     }
   },
   "agent_servers": {
-    "github-copilot-cli": {
+    "codex-acp": {
       "type": "registry"
     },
-    "kilo": {
+    "claude-acp": {
       "type": "registry"
     },
     "cursor": {
@@ -148,7 +160,7 @@
         "enable_thinking": false
       }
     ],
-    "dock": "right",
+    "dock": "left",
     "default_profile": "ask",
     "profiles": {
       "cautious": {
@@ -165,8 +177,10 @@
     "always_allow_tool_actions": true,
     "play_sound_when_agent_done": true,
     "default_model": {
-      "provider": "copilot_chat",
-      "model": "gpt-5.2"
+      "effort": "medium",
+      "enable_thinking": true,
+      "provider": "openai-subscribed",
+      "model": "gpt-5.4"
     }
   },
   "base_keymap": "VSCode",
