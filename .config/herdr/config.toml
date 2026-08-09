@@ -2,6 +2,11 @@
 # differ. Herdr's native Ctrl-b prefix and Ctrl-b Ctrl-b passthrough remain.
 onboarding = false
 
+[ui]
+pane_borders = true
+pane_gaps = false
+
+agent_panel_sort = "spaces"
 [keys]
 
 # Tabs
@@ -23,3 +28,5 @@ resize_mode = ["prefix+r", "ctrl+n"]
 workspace_picker = ["prefix+w", "ctrl+o"]
 navigate_workspace_up = ["up", "k"]
 navigate_workspace_down = ["down", "j"]
+switch_workspace = "prefix+shift+1..9"
+focus_agent = "prefix+alt+1..9"
