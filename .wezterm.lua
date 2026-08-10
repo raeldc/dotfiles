@@ -29,6 +29,11 @@ config.window_decorations = "RESIZE"
 config.window_background_opacity = 0.98
 config.macos_window_background_blur = 8
 
+-- Forward Option as Alt/Meta and honor enhanced keyboard negotiation.
+config.send_composed_key_when_left_alt_is_pressed = false
+config.send_composed_key_when_right_alt_is_pressed = false
+config.enable_kitty_keyboard = true
+
 config.inactive_pane_hsb = {
   saturation = 0.9,
   brightness = 0.5,
@@ -43,7 +48,7 @@ config.keys = {
   {
       key="Enter",
       mods="SHIFT",
-      action=wezterm.action{SendString="\x1b\r"},
+       action=wezterm.action{SendKey={key="Enter", mods="SHIFT"}},
   },
   {
     key = 'j',
