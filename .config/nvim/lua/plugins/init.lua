@@ -1,5 +1,10 @@
 return {
   {
+    "L3MON4D3/LuaSnip",
+    pin = true,
+  },
+
+  {
     "stevearc/conform.nvim",
     -- event = 'BufWritePre', -- uncomment for format on save
     config = function()
