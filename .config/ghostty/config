@@ -6,11 +6,7 @@ theme = deepsea
 
 background-opacity = 1
 
-# Match WezTerm-style pane and tab navigation
-keybind = alt+h=goto_split:left
-keybind = alt+j=goto_split:down
-keybind = alt+k=goto_split:up
-keybind = alt+l=goto_split:right
+# Terminal-level split creation and tab navigation
 keybind = alt+shift+j=new_split:down
 keybind = alt+shift+l=new_split:right
 keybind = alt+shift+"=new_split:down

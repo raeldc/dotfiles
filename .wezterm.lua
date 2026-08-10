@@ -44,7 +44,7 @@ config.keys = {
   {
     key = 'h',
     mods = 'ALT',
-    action = act.ActivatePaneDirection 'Left',
+    action = act.SendString '\x1b[104;3u',
   },
   {
       key="Enter",
@@ -54,7 +54,7 @@ config.keys = {
   {
     key = 'j',
     mods = 'ALT',
-    action = act.ActivatePaneDirection 'Down'
+    action = act.SendString '\x1b[106;3u'
   },
   {
     key = 'j',
@@ -69,7 +69,7 @@ config.keys = {
   {
     key = 'k',
     mods = 'ALT',
-    action = act.ActivatePaneDirection 'Up'
+    action = act.SendString '\x1b[107;3u'
   },
   {
     key = 'k',
@@ -84,7 +84,7 @@ config.keys = {
   {
     key = 'l',
     mods = 'ALT',
-    action = act.ActivatePaneDirection 'Right'
+    action = act.SendString '\x1b[108;3u'
   },
   {
     key = '[',

@@ -1,2 +1,5 @@
 [font]
 size = 14.0
+
+[window]
+option_as_alt = "Both"
