@@ -57,9 +57,19 @@ config.keys = {
     action = act.ActivatePaneDirection 'Down'
   },
   {
+    key = 'j',
+    mods = 'CTRL|ALT',
+    action = act.SendString '\x1b[106;7u'
+  },
+  {
     key = 'k',
     mods = 'ALT',
     action = act.ActivatePaneDirection 'Up'
+  },
+  {
+    key = 'k',
+    mods = 'CTRL|ALT',
+    action = act.SendString '\x1b[107;7u'
   },
   {
     key = 'l',
