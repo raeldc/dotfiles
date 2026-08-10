@@ -62,6 +62,11 @@ config.keys = {
     action = act.SendString '\x1b[106;7u'
   },
   {
+    key = 'j',
+    mods = 'CTRL|ALT|SHIFT',
+    action = act.SendString '\x1b[106;8u'
+  },
+  {
     key = 'k',
     mods = 'ALT',
     action = act.ActivatePaneDirection 'Up'
@@ -70,6 +75,11 @@ config.keys = {
     key = 'k',
     mods = 'CTRL|ALT',
     action = act.SendString '\x1b[107;7u'
+  },
+  {
+    key = 'k',
+    mods = 'CTRL|ALT|SHIFT',
+    action = act.SendString '\x1b[107;8u'
   },
   {
     key = 'l',
