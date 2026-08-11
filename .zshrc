@@ -63,6 +63,8 @@ alias psmnd-cf="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psm
 
 alias psmnd-vm="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev"
 
+alias devbox="herdr --remote rael@birdbox --remote-keybindings server"
+
 # pnpm
 export PNPM_HOME="$HOME/l/homebrew/bin/pnpm"
 case ":$PATH:" in
