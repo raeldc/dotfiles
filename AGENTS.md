@@ -2,6 +2,15 @@
 
 This is the canonical agent guide for this repo. Follow it as the source of truth.
 
+## About this Project
+
+This project is the "dotfiles" where most reusable config are stowed. When stowed is mention, it will
+mean the GNU stow, a command line tool for symlinking files. The common usecase is the symlinking of
+config files from a folder, usually in "~/.dotfiles". So when operator says "stow the config of this
+tool" it usually means use GNU stow to manage the config of that tool in this folder. This also means
+that when the operator tells you to check the config, the first place to look at is here in this 
+folder. If not found in this folder, that's when you venture out. 
+
 ## Repository Map
 Dotfiles mirror `$HOME` via symlinks. Root shell entrypoints live at the repo root; app configs live in `.config/`.
 - Shell: `.zshrc`, `.zprofile`, `.zshenv`, `.profile`, `.bash_profile`
