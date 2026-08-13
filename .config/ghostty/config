@@ -7,6 +7,7 @@ theme = deepsea
 background-opacity = 1
 
 # Terminal-level split creation and tab navigation
+keybind = alt+shift+h=unbind
 keybind = alt+shift+l=unbind
 keybind = alt+shift+"=new_split:down
 keybind = alt+shift+%=new_split:right
