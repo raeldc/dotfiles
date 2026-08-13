@@ -30,10 +30,10 @@ workspace_picker = ["prefix+w", "ctrl+o"]
 navigate_workspace_up = ["up", "k"]
 navigate_workspace_down = ["down", "j"]
 switch_workspace = "prefix+shift+1..9"
-previous_workspace = "alt+k"
-next_workspace = "alt+j"
-previous_agent = "alt+,"
-next_agent = "alt+."
+previous_workspace = "alt+shift+k"
+next_workspace = "alt+shift+j"
+previous_agent = "alt+shift+h"
+next_agent = "alt+shift+l"
 focus_agent = "prefix+alt+1..9"
 
 [theme]
