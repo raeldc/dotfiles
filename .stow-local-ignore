@@ -13,5 +13,7 @@
 
 .*\.md
 activities
+bin
 docs
 documentation
+manifests
