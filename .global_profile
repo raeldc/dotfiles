@@ -34,9 +34,7 @@ if [ -n "${ZSH_VERSION:-}" ] && [ -s "$BUN_INSTALL/_bun" ]; then
   . "$BUN_INSTALL/_bun"
 fi
 
-# pnpm (custom pnpm home)
-export PNPM_HOME="$HOME/l/homebrew/bin/pnpm"
-dotfiles_path_prepend "$PNPM_HOME"
+# pnpm: PNPM_HOME is machine-specific — set it in ~/.local/bin/env when needed.
 
 # rust
 # shellcheck source=/dev/null
