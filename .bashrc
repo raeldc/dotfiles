@@ -1,4 +1,4 @@
 # shellcheck shell=sh
-# Load env + platform profiles for login shells
+# Non-login interactive bash (login shells use .bash_profile)
 # shellcheck source=/dev/null
 . "$HOME/.profile"

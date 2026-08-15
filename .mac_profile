@@ -1,0 +1,33 @@
+# shellcheck shell=sh
+# ~/.mac_profile — macOS-only setup, sourced from ~/.profile
+
+# Homebrew (Apple Silicon first, Intel fallback)
+if [ -z "${HOMEBREW_REPOSITORY:-}" ]; then
+  if [ -x /opt/homebrew/bin/brew ]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [ -x /usr/local/bin/brew ]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+fi
+
+# Unversioned Homebrew python (Intel)
+dotfiles_path_prepend /usr/local/opt/python/libexec/bin
+
+# iTerm2 shell integration (zsh only)
+if [ -n "${ZSH_VERSION:-}" ] && [ -e "$HOME/.iterm2_shell_integration.zsh" ]; then
+  # shellcheck source=/dev/null
+  . "$HOME/.iterm2_shell_integration.zsh"
+fi
+
+# colima
+alias docker-start='colima start --mount-type 9p'
+
+# podman as docker drop-in replacement
+alias docker='podman'
+export DOCKER_HOST="unix://${TMPDIR}podman/podman-machine-default-api.sock"
+
+# terraform completions (complete is a bash/zsh builtin)
+# shellcheck disable=SC3044
+if type complete >/dev/null 2>&1 && [ -x /opt/homebrew/bin/terraform ]; then
+  complete -o nospace -C /opt/homebrew/bin/terraform terraform
+fi

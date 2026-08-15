@@ -13,14 +13,16 @@ folder. If not found in this folder, that's when you venture out.
 
 ## Repository Map
 Dotfiles mirror `$HOME` via symlinks. Root shell entrypoints live at the repo root; app configs live in `.config/`.
-- Shell: `.zshrc`, `.zprofile`, `.zshenv`, `.profile`, `.bash_profile`
+- Shell: `.zshrc`, `.zprofile`, `.bash_profile`, `.bashrc`, `.profile`
+- Shell platform split: `.global_profile` (all OSes), `.mac_profile` (Darwin), `.linux_profile` (Linux) — dispatched from `.profile` via `uname`; keep POSIX sh compatible
 - Terminal/UI: `.wezterm.lua`, `.p10k.zsh`
 - Editor/terminal configs: `.config/nvim/`, `.config/zed/`, `.config/zellij/`, `.config/alacritty/`, `.config/ghostty/`
 - Helper scripts: `bin/` (single-purpose scripts, kebab-case)
 
 ## Config Quick Map
 Use this to jump straight to the right file for common instructions.
-- Shell startup: `.zshrc`, `.zprofile`, `.zshenv`, `.profile`, `.bash_profile`
+- Shell startup: `.zshrc`, `.zprofile`, `.profile`, `.bash_profile`, `.bashrc`
+- Platform split: `.global_profile` (both), `.mac_profile` (macOS-only), `.linux_profile` (Linux-only)
 - Shell prompt/theme: `.p10k.zsh`
 - WezTerm: `.wezterm.lua`
 - Zellij: `.config/zellij/`

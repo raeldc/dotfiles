@@ -1,0 +1,7 @@
+# shellcheck shell=sh
+# ~/.linux_profile — Linux-only setup, sourced from ~/.profile
+
+# Homebrew (Linuxbrew)
+if [ -z "${HOMEBREW_REPOSITORY:-}" ] && [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+fi

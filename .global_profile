@@ -1,0 +1,109 @@
+# shellcheck shell=sh
+# ~/.global_profile — cross-platform setup, sourced by bash and zsh
+# via ~/.profile on macOS and Linux. Keep POSIX sh compatible.
+
+# Prepend dir to PATH unless already present (idempotent)
+dotfiles_path_prepend() {
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *) [ -d "$1" ] && PATH="$1:$PATH" ;;
+  esac
+  export PATH
+}
+
+# Fallback for systems without xterm-ghostty terminfo
+if [ "$TERM" = "xterm-ghostty" ] && ! infocmp xterm-ghostty >/dev/null 2>&1; then
+  TERM=xterm-256color
+  export TERM
+fi
+
+export EDITOR=nvim
+
+# Paths
+dotfiles_path_prepend "$HOME/.dotfiles/bin"
+dotfiles_path_prepend "$HOME/.local/bin"
+dotfiles_path_prepend "$HOME/go/bin"
+dotfiles_path_prepend "$HOME/.opencode/bin"
+dotfiles_path_prepend "$HOME/.antigravity/antigravity/bin"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+dotfiles_path_prepend "$BUN_INSTALL/bin"
+if [ -n "${ZSH_VERSION:-}" ] && [ -s "$BUN_INSTALL/_bun" ]; then
+  # shellcheck source=/dev/null
+  . "$BUN_INSTALL/_bun"
+fi
+
+# pnpm (custom pnpm home)
+export PNPM_HOME="$HOME/l/homebrew/bin/pnpm"
+dotfiles_path_prepend "$PNPM_HOME"
+
+# rust
+# shellcheck source=/dev/null
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# nvm
+NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+export NVM_DIR
+if ! command -v nvm >/dev/null 2>&1 && [ -s "$NVM_DIR/nvm.sh" ]; then
+  # shellcheck source=/dev/null
+  . "$NVM_DIR/nvm.sh"
+fi
+# shellcheck source=/dev/null
+[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
+
+# opencode: per-OS config
+if [ -z "${OPENCODE_CONFIG-}" ]; then
+  case "$(uname -s)" in
+    Darwin) OPENCODE_CONFIG="$HOME/.config/opencode/opencode.mac.json" ;;
+    Linux) OPENCODE_CONFIG="$HOME/.config/opencode/opencode.linux.json" ;;
+  esac
+  export OPENCODE_CONFIG
+fi
+
+# Local-only env vars (gitignored)
+if [ -f "$HOME/.dotfiles/.env" ]; then
+  set -a
+  # shellcheck source=/dev/null
+  . "$HOME/.dotfiles/.env"
+  set +a
+fi
+
+# fzf
+if command -v fzf >/dev/null 2>&1; then
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    eval "$(fzf --zsh)"
+  elif [ -n "${BASH_VERSION:-}" ]; then
+    eval "$(fzf --bash)"
+  fi
+fi
+
+# zoxide
+export _ZO_DOCTOR=0
+if command -v zoxide >/dev/null 2>&1; then
+  if [ -n "${ZSH_VERSION:-}" ]; then
+    eval "$(zoxide init --cmd cd zsh)"
+  elif [ -n "${BASH_VERSION:-}" ]; then
+    eval "$(zoxide init --cmd cd bash)"
+  fi
+fi
+
+# aliases
+command -v eza >/dev/null 2>&1 && alias ls='eza --color=always --icons=always --no-time --no-permissions --no-user'
+alias lzd='lazydocker'
+alias fvim='nvim $(fzf -m --preview="bat --color=always {}")'
+# alias vim='nvim'
+alias psmnd-cf="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev&"
+alias psmnd-vm="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev"
+alias devbox="herdr --remote rael@birdbox --remote-keybindings server"
+
+# Kiro terminal integration
+if [ "$TERM_PROGRAM" = "kiro" ] && command -v kiro >/dev/null 2>&1 && [ -n "${ZSH_VERSION:-}" ]; then
+  # shellcheck source=/dev/null
+  . "$(kiro --locate-shell-integration-path zsh)"
+fi
+
+# Weights & Biases terminal tool
+if command -v wt >/dev/null 2>&1 && [ -n "${ZSH_VERSION:-}" ]; then
+  eval "$(command wt config shell init zsh)"
+fi

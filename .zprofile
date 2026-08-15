@@ -1,7 +1,2 @@
-emulate sh
-source ~/.profile
-emulate zsh
-
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
-export PATH="$HOME/.local/bin:$PATH"
+# Load env + platform profiles for login shells (POSIX emulation for .profile)
+emulate sh -c '. "$HOME/.profile"'

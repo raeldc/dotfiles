@@ -1,13 +1,17 @@
-export PATH="/usr/local/opt/python/libexec/bin:$PATH"
-export PATH="$HOME/.dotfiles/bin:$PATH"
-. "$HOME/.cargo/env"
-. "$HOME/.local/bin/env"
-. "$HOME/.local/bin"
+# shellcheck shell=sh
+# ~/.profile — loads global + platform-specific shell setup
+# Sourced by .zprofile (zsh login), .bash_profile (bash login), and .zshrc/.bashrc.
 
-if [ -z "${OPENCODE_CONFIG-}" ]; then
-  case "$(uname -s)" in
-    Darwin) OPENCODE_CONFIG="$HOME/.config/opencode/opencode.mac.json" ;;
-    Linux) OPENCODE_CONFIG="$HOME/.config/opencode/opencode.linux.json" ;;
-  esac
-  export OPENCODE_CONFIG
-fi
+# shellcheck source=/dev/null
+. "$HOME/.global_profile"
+
+case "$(uname -s)" in
+  Darwin)
+    # shellcheck source=/dev/null
+    [ -f "$HOME/.mac_profile" ] && . "$HOME/.mac_profile"
+    ;;
+  Linux)
+    # shellcheck source=/dev/null
+    [ -f "$HOME/.linux_profile" ] && . "$HOME/.linux_profile"
+    ;;
+esac
