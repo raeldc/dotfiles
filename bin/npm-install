@@ -4,8 +4,29 @@ set -euo pipefail
 
 manifest_path="${NPM_MANIFEST:-$HOME/.dotfiles/manifests/npm.json}"
 
-if ! command -v node >/dev/null && [ ! -s "$HOME/.nvm/nvm.sh" ]; then
-  echo "node not found and nvm not installed" >&2
+# Locate nvm.sh: hand-linked ~/.nvm, or Homebrew's opt tree (mac/linux).
+find_nvm_sh() {
+  local prefix cand
+  prefix="$(brew --prefix 2>/dev/null || true)"
+  for cand in \
+    "$HOME/.nvm/nvm.sh" \
+    "${HOMEBREW_PREFIX:-}/opt/nvm/nvm.sh" \
+    "${prefix:+$prefix/opt/nvm/nvm.sh}" \
+    /opt/homebrew/opt/nvm/nvm.sh \
+    /usr/local/opt/nvm/nvm.sh \
+    /home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh; do
+    if [ -n "$cand" ] && [ -s "$cand" ]; then
+      printf '%s\n' "$cand"
+      return 0
+    fi
+  done
+  return 1
+}
+
+nvm_sh="$(find_nvm_sh || true)"
+
+if ! command -v node >/dev/null && [ -z "$nvm_sh" ]; then
+  echo "node not found and nvm.sh not found" >&2
   echo "run: brew install nvm (or bin/bootstrap)" >&2
   exit 1
 fi
@@ -16,7 +37,7 @@ if [ ! -f "$manifest_path" ]; then
 fi
 
 # shellcheck source=/dev/null
-[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
+[ -n "$nvm_sh" ] && . "$nvm_sh"
 
 read_manifest() {
   python3 - "$manifest_path" "$1" <<'PY'

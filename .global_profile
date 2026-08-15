@@ -42,12 +42,25 @@ dotfiles_path_prepend "$PNPM_HOME"
 # shellcheck source=/dev/null
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
-# nvm
+# nvm — NVM_DIR holds installed node versions; nvm.sh itself may live there
+# (hand-linked) or in Homebrew's opt tree. Try known locations in order so a
+# greenfield machine works without a hand-created ~/.nvm/nvm.sh symlink.
 NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 export NVM_DIR
-if ! command -v nvm >/dev/null 2>&1 && [ -s "$NVM_DIR/nvm.sh" ]; then
-  # shellcheck source=/dev/null
-  . "$NVM_DIR/nvm.sh"
+if ! command -v nvm >/dev/null 2>&1; then
+  for _nvm_sh in \
+    "$NVM_DIR/nvm.sh" \
+    "${HOMEBREW_PREFIX:-}/opt/nvm/nvm.sh" \
+    "/opt/homebrew/opt/nvm/nvm.sh" \
+    "/usr/local/opt/nvm/nvm.sh" \
+    "/home/linuxbrew/.linuxbrew/opt/nvm/nvm.sh"; do
+    if [ -s "$_nvm_sh" ]; then
+      # shellcheck source=/dev/null
+      . "$_nvm_sh"
+      break
+    fi
+  done
+  unset _nvm_sh
 fi
 # shellcheck source=/dev/null
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
