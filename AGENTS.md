@@ -40,6 +40,16 @@ Use this to jump straight to the right file for common instructions.
 - Helper scripts: `bin/`
 - Local-only env: `~/.local/bin/env`
 
+## Platform Split (mac / linux / global)
+These dotfiles run on both macOS and Linux machines. Platform-dependent config must land in the right bucket:
+- **global** — works everywhere
+- **mac** — macOS-only (Darwin)
+- **linux** — Linux-only
+
+This applies to shell setup and packages alike:
+- Shell: `.global_profile` / `.mac_profile` / `.linux_profile`, dispatched from `.profile` via `uname`. Keep them POSIX sh compatible.
+- Packages: `manifests/homebrew.json` splits `taps` and `formulae` into `{global, mac, linux}` objects. `casks` are macOS-only and stay a flat list.
+
 ## OS-Specific Bootstrap
 Homebrew is the preferred package manager on both macOS and Linux.
 
@@ -62,6 +72,9 @@ Homebrew is the preferred package manager on both macOS and Linux.
 ## Package Manifest
 The package source of truth is `manifests/homebrew.json`. Do not edit generated lists in other files.
 When installing software, prefer Homebrew first, then update `manifests/homebrew.json` to match the change.
+Per the Platform Split principle, `taps` and `formulae` use the `{global, mac, linux}` schema — classify each
+entry by where it works (`krunkit` is mac-only, for example). `casks` are macOS-only. `bin/brew-install`
+merges `global` with the current platform's list automatically.
 For non-brew installs, record the installation in `INSTALL.md` alongside any relevant version, date, and install command.
 
 Install commands (macOS):

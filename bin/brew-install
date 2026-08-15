@@ -37,16 +37,27 @@ if [[ ! -f "$manifest_path" ]]; then
 fi
 
 read_manifest() {
-  python3 - "$manifest_path" "$1" <<'PY'
+  python3 - "$manifest_path" "$1" "$(uname -s)" <<'PY'
 import json
 import sys
 
 path = sys.argv[1]
 key = sys.argv[2]
+platform = {"Darwin": "mac", "Linux": "linux"}.get(sys.argv[3], "")
 with open(path, "r", encoding="utf-8") as handle:
   data = json.load(handle)
 
-for item in data.get(key, []):
+value = data.get(key, [])
+if isinstance(value, dict):
+  # Platform-split schema: {global: [...], mac: [...], linux: [...]}
+  items = list(value.get("global", []))
+  if platform:
+    items += list(value.get(platform, []))
+else:
+  # Flat list (backward compatible)
+  items = value
+
+for item in items:
   print(item)
 PY
 }
@@ -70,6 +81,10 @@ install_formulae() {
 }
 
 install_casks() {
+  if [[ "$(uname -s)" != "Darwin" ]]; then
+    echo "Skipping casks: macOS only" >&2
+    return 0
+  fi
   mapfile -t casks < <(read_manifest casks)
   if [[ ${#casks[@]} -eq 0 ]]; then
     return 0
