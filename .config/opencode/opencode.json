@@ -10,35 +10,5 @@
       "enabled": true,
       "type": "local"
     }
-  },
-  "provider": {
-    "omlx": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "oMLX",
-      "options": {
-        "baseURL": "http://127.0.0.1:9495/v1",
-        "apiKey": "{env:OMLX_API_KEY}"
-      },
-      "models": {
-        "gemma-4-E4B-it-UD-MLX-4bit": {
-          "name": "gemma-4-E4B-it-UD-MLX-4bit",
-          "modalities": {
-            "input": [
-              "text",
-              "image"
-            ],
-            "output": [
-              "text"
-            ]
-          },
-          "attachment": true,
-          "limit": {
-            "context": 32768,
-            "output": 32768
-          }
-        }
-      }
-    }
-  },
-  "model": "omlx/gemma-4-E4B-it-UD-MLX-4bit"
+  }
 }

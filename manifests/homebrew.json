@@ -2,7 +2,6 @@
   "taps": {
     "global": [
       "hashicorp/tap",
-      "jundot/omlx",
       "nats-io/nats-tools",
       "netbirdio/tap",
       "supabase/tap",
