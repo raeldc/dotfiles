@@ -6,8 +6,6 @@ lock.mdb
 .p10k.zsh.swp
 .codex
 .gemini
-.augment/*
-!.augment/settings.json
 .pi/*
 !.pi/agent
 .pi/agent/*

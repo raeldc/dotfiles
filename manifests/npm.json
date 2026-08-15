@@ -1,7 +1,6 @@
 {
   "node": "24.13.0",
   "packages": [
-    "@augmentcode/auggie",
     "@earendil-works/pi-coding-agent",
     "@plannotator/pi-extension",
     "@tessl/cli",
