@@ -84,6 +84,17 @@ entry by where it works (`krunkit` is mac-only, for example). `casks` are macOS-
 merges `global` with the current platform's list automatically.
 For non-brew installs, record the installation in `INSTALL.md` alongside any relevant version, date, and install command.
 
+Installing a tool is not finished when the binary lands — it has two halves, and both belong here:
+1. **Record the package** so it reinstalls everywhere (`manifests/homebrew.json`, or `INSTALL.md` for non-brew).
+2. **Bring its config under management.** If the tool has any configuration — a config file, an rc, a
+   shell-init snippet — stow it here at its mirrored `$HOME` path (e.g. under `.config/<tool>/`) or add
+   the snippet to the right shell profile, so the tool behaves identically on every machine. A stowed
+   binary that reads machine-local, untracked config is not reproducible. Skip this only when the tool
+   genuinely has no config worth pinning.
+
+Keep secrets, credentials, and machine-local state (history DBs, tokens, keys, caches) out of the repo —
+those live under `~/.local/...` and are never committed (see Local-Only Files). Stow the config, not the data.
+
 Install commands (macOS):
 ```sh
 bin/brew-install --taps
