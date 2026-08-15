@@ -72,6 +72,11 @@ install_taps() {
   fi
   for tap in "${taps[@]}"; do
     brew tap "$tap"
+    # Newer Homebrew refuses to load untrusted third-party taps; trusting here
+    # is the explicit opt-in from listing the tap in the manifest.
+    if brew help trust >/dev/null 2>&1; then
+      brew trust --tap "$tap" >/dev/null 2>&1 || true
+    fi
   done
 }
 
