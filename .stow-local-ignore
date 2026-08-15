@@ -10,6 +10,7 @@
 \.envrc
 \.mise\.toml
 \.tool-versions
+opencode\.json
 
 .*\.md
 activities

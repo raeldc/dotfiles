@@ -3,6 +3,7 @@ lock.mdb
 .config/zed/*
 !.config/zed/themes
 !.config/zed/*.json
+.config/opencode/opencode.json
 .p10k.zsh.swp
 .codex
 .pi/*

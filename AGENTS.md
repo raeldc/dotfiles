@@ -30,7 +30,7 @@ Use this to jump straight to the right file for common instructions.
 - Zed: `.config/zed/`
 - Alacritty: `.config/alacritty/`
 - Ghostty: `.config/ghostty/`
-- OpenCode: `.config/opencode/`
+- OpenCode: `.config/opencode/opencode.mac.json` / `opencode.linux.json` — tracked, platform-shared settings only. `opencode.json` (the global config opencode always loads, e.g. via `opencode mcp add`) is machine-local and git-untracked on purpose — MCP servers depend on locally-installed binaries, so keep them out of the repo.
 - Herdr: `.config/herdr/config.template.toml` — tracked **template** only. `bin/herdr-config` renders a machine-local `~/.config/herdr/config.toml` (git-untracked, not stowed) from it, preserving this machine's `[theme]` so in-app theme changes (`prefix+b s`) never churn the repo. `bin/sync`/`bin/bootstrap` re-render it. Do not stow the live config.
 - Pi: `.pi/agent/` (settings, keybindings, extensions; auth/sessions stay local)
 - Cursor: `cursor/Library/Application Support/Cursor/User/`
