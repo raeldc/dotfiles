@@ -23,6 +23,10 @@ mkdir -p "$HOME/.config" "$HOME/.pi/agent"
 restow_output="$(stow --no-folding --restow --dir="$repo_dir" --target="$HOME" . 2>&1)" || {
   # Local real files blocking stow (tools like pi rewrite configs in place,
   # replacing symlinks). Back them up and let the repo version win.
+  # Only the "real file where a symlink belongs" conflict is auto-resolved
+  # (this is what pi/config-rewriting tools cause). Other conflict shapes
+  # (target owned by another package, etc.) yield no matches and fall through
+  # to the hard error below.
   conflicts="$(printf '%s\n' "$restow_output" | sed -n 's/.*over existing target \([^ ]*\).*/\1/p')"
   if [ -z "$conflicts" ]; then
     printf '%s\n' "$restow_output" >&2
@@ -36,9 +40,10 @@ restow_output="$(stow --no-folding --restow --dir="$repo_dir" --target="$HOME" .
     else
       echo "differs from repo, backed up: $rel -> $backup_dir/$rel"
       mkdir -p "$backup_dir/$(dirname "$rel")"
-      cp "$HOME/$rel" "$backup_dir/$rel"
+      # -a preserves mode/times and copies dirs/symlinks intact
+      cp -a "$HOME/$rel" "$backup_dir/$rel"
     fi
-    rm "$HOME/$rel"
+    rm -rf "$HOME/${rel:?}"
   done <<< "$conflicts"
   stow --no-folding --restow --dir="$repo_dir" --target="$HOME" .
 }
@@ -55,10 +60,12 @@ step "Applying npm manifest"
 
 if [ -x "$repo_dir/bin/activities" ]; then
   step "Running deterministic activities"
-  "$repo_dir/bin/activities" run
+  # Don't let one failing activity abort the whole sync (manifests are already
+  # applied by this point); surface it and continue to the pending report.
+  DOTFILES_AGENT=sync "$repo_dir/bin/activities" run || echo "some activities failed — see above" >&2
   pending="$("$repo_dir/bin/activities" list --pending | wc -l | tr -d ' ')"
   if [ "$pending" != "0" ]; then
-    echo "$pending inferential activities pending — process with: bin/activities list --pending"
+    echo "$pending activity(ies) pending — review with: bin/activities list --pending"
   fi
 fi
 
