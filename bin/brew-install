@@ -62,6 +62,15 @@ for item in items:
 PY
 }
 
+# Exact-match membership test against a newline-separated list
+list_contains() {
+  case "
+$1
+" in *"
+$2
+"*) return 0 ;; *) return 1 ;; esac
+}
+
 install_taps() {
   local taps=()
   while IFS= read -r line; do
@@ -81,8 +90,12 @@ install_taps() {
 }
 
 install_formulae() {
-  local formulae=()
+  local formulae=() line
+  local installed
+  installed="$(brew list --formula --full-name 2>/dev/null || true)"
   while IFS= read -r line; do
+    # Skip already-installed: keeps re-runs quiet and avoids surprise upgrades
+    list_contains "$installed" "$line" && continue
     formulae+=("$line")
   done < <(read_manifest formulae)
   if [[ ${#formulae[@]} -eq 0 ]]; then
@@ -96,8 +109,11 @@ install_casks() {
     echo "Skipping casks: macOS only" >&2
     return 0
   fi
-  local casks=()
+  local casks=() line
+  local installed
+  installed="$(brew list --cask 2>/dev/null || true)"
   while IFS= read -r line; do
+    list_contains "$installed" "$line" && continue
     casks+=("$line")
   done < <(read_manifest casks)
   if [[ ${#casks[@]} -eq 0 ]]; then

@@ -152,7 +152,7 @@
       "mpdecimal",
       "mpg123",
       "msgpack",
-      "nats",
+      "nats-io/nats-tools/nats",
       "nats-server",
       "neonctl",
       "neovim",
@@ -211,7 +211,7 @@
       "srt",
       "stow",
       "supabase",
-      "surreal",
+      "surrealdb/tap/surreal",
       "svt-av1",
       "terraform",
       "tesseract",
@@ -247,7 +247,7 @@
       "zstd"
     ],
     "mac": [
-      "krunkit"
+      "slp/krunkit/krunkit"
     ],
     "linux": []
   },
