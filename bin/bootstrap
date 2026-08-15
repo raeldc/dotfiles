@@ -38,6 +38,15 @@ step "Stow dotfiles (no folding)"
 mkdir -p "$HOME/.config" "$HOME/.pi/agent"
 stow --no-folding --dir="$repo_dir" --target="$HOME" .
 
+if [ -x "$repo_dir/bin/activities" ]; then
+  step "Running deterministic activities"
+  DOTFILES_AGENT=bootstrap "$repo_dir/bin/activities" run || echo "some activities failed — see above" >&2
+  pending="$("$repo_dir/bin/activities" list --pending | wc -l | tr -d ' ')"
+  if [ "$pending" != "0" ]; then
+    echo "$pending activity(ies) pending — review with: bin/activities list --pending"
+  fi
+fi
+
 cat <<'EOF'
 
 Bootstrap complete. Remaining manual/interactive steps — see docs/setup/manual.md:
