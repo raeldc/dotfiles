@@ -21,5 +21,14 @@ bin/brew-install --taps
 bin/brew-install --formulae
 ```
 
+## Shell
+These dotfiles are zsh-based. macOS ships zsh, but Linux usually doesn't, so `zsh` is declared in the
+`linux` bucket of `manifests/homebrew.json` and installed by `bin/brew-install --formulae`. Make it
+your login shell once installed:
+```sh
+command -v zsh | sudo tee -a /etc/shells >/dev/null   # if not already in /etc/shells
+chsh -s "$(command -v zsh)"
+```
+
 ## Continue
 Follow `docs/setup/shared.md` for cloning, linking, and verification.

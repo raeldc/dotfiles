@@ -106,7 +106,9 @@
       "cocoapods",
       "slp/krunkit/krunkit"
     ],
-    "linux": []
+    "linux": [
+      "zsh"
+    ]
   },
   "casks": [
     "alacritty",
