@@ -18,6 +18,7 @@ Dotfiles mirror `$HOME` via symlinks. Root shell entrypoints live at the repo ro
 - Terminal/UI: `.wezterm.lua`, `.p10k.zsh`
 - Editor/terminal configs: `.config/nvim/`, `.config/zed/`, `.config/zellij/`, `.config/alacritty/`, `.config/ghostty/`
 - Helper scripts: `bin/` (single-purpose scripts, kebab-case)
+- Activities: `activities/` (global activity manifest — see Activity System)
 
 ## Config Quick Map
 Use this to jump straight to the right file for common instructions.
@@ -108,6 +109,28 @@ bin/sync
 It pulls (ff-only, aborts if local changes are uncommitted), restows with `--no-folding`,
 and reapplies the Homebrew and npm manifests. `bin/bootstrap` is for greenfield machines;
 `bin/sync` is for existing ones.
+
+## Activity System
+System changes are tracked as activities — migration-like units that agents execute and log.
+
+- **Global manifest**: `activities/NNNN-slug.md` (committed). All agents on all machines read it.
+- **Machine state**: `~/.local/state/dotfiles/done/<id>.json` (local only, never commit).
+- **Per-agent journal**: `~/.local/state/dotfiles/journal/<agent>.md` (local only, chmod 600). Agents never edit another agent's journal.
+
+Each activity file has front matter — `id`, `kind: deterministic | inferential`,
+`platform: global | mac | linux`, and for deterministic ones a `run:` command — plus a
+prose body explaining intent for inference. The `id` must equal the filename.
+
+Rules for agents:
+- After completing any operator-requested system change, write a new activity describing it,
+  commit it, and mark it done locally.
+- Prefer `kind: deterministic` with a `run:` command (token-free, reproducible); use
+  `inferential` only when the steps can't be scripted, and put instructions in the body.
+- When the operator says "sync": run `bin/sync`, then process what's left with
+  `bin/activities list --pending` — for each inferential activity, adapt it to this platform
+  or mark `skipped` with a reason.
+- Always identify yourself: `DOTFILES_AGENT=<name> bin/activities mark <id> <done|skipped|failed> "note"`.
+- Never mark an activity you haven't executed. `bin/sync` runs deterministic activities automatically.
 
 ## Local-Only Files
 Keep secrets and machine-specific config out of Git. Use `~/.local/bin/env` for per-machine exports.

@@ -1,0 +1,188 @@
+#!/usr/bin/env bash
+# Activity system: deterministic runner + machine state management.
+# Activities live in <repo>/activities/*.md (committed); machine state in
+# ~/.local/state/dotfiles (local only). See AGENTS.md "Activity System".
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+activities_dir="$repo_dir/activities"
+state_dir="${DOTFILES_STATE_DIR:-$HOME/.local/state/dotfiles}"
+done_dir="$state_dir/done"
+journal_dir="$state_dir/journal"
+
+platform="linux"
+[ "$(uname -s)" = "Darwin" ] && platform="mac"
+agent="${DOTFILES_AGENT:-human}"
+
+now() { date -u +%Y-%m-%dT%H:%M:%SZ; }
+
+usage() {
+  cat <<EOF
+Usage: bin/activities <command> [args]
+
+Commands:
+  list [--pending]            List activities with this machine's status
+  show <id>                   Show an activity and its status
+  run                         Run pending deterministic activities (this platform)
+  mark <id> <status> [note]   Record done | skipped | failed for this machine
+                              (set agent identity via DOTFILES_AGENT=<name>)
+
+State: $state_dir (never commit)
+EOF
+}
+
+# read_meta <file> <field> — read a front-matter field, empty if absent
+read_meta() {
+  python3 - "$1" "$2" <<'PY'
+import re
+import sys
+
+path, field = sys.argv[1], sys.argv[2]
+try:
+  text = open(path, encoding="utf-8").read()
+except OSError:
+  sys.exit(0)
+m = re.match(r"\A---\n(.*?)\n---\n", text, re.S)
+if m:
+  for line in m.group(1).splitlines():
+    if ":" in line:
+      k, v = line.split(":", 1)
+      if k.strip() == field:
+        print(v.strip())
+        break
+PY
+}
+
+# marker_status <id> — print status from a done marker, empty if absent
+marker_status() {
+  python3 - "$done_dir/$1.json" <<'PY'
+import json
+import sys
+
+try:
+  print(json.load(open(sys.argv[1], encoding="utf-8"))["status"])
+except (OSError, KeyError, ValueError):
+  pass
+PY
+}
+
+# mark <id> <status> [note] — write marker + journal entry
+mark() {
+  local id="$1" status="$2" note="${3:-}"
+  mkdir -p "$done_dir" "$journal_dir"
+  python3 - "$done_dir/$id.json" "$id" "$status" "$agent" "$(now)" "$note" <<'PY'
+import json
+import sys
+
+path, activity_id, status, by, at, note = sys.argv[1:7]
+with open(path, "w", encoding="utf-8") as handle:
+  json.dump({"id": activity_id, "status": status, "by": by, "at": at, "note": note}, handle, indent=2)
+  handle.write("\n")
+PY
+  local journal="$journal_dir/$agent.md"
+  touch "$journal"
+  chmod 600 "$journal"
+  {
+    printf '\n## %s — %s — %s\n' "$(now)" "$id" "$status"
+    if [ -n "$note" ]; then
+      printf 'by: %s\n%s\n' "$agent" "$note"
+    fi
+  } >> "$journal"
+}
+
+applies_here() { # applies_here <platform-field>
+  [ "$1" = "global" ] || [ "$1" = "$platform" ]
+}
+
+cmd_list() {
+  local only_pending="${1:-}" f id kind plat status
+  [ -d "$activities_dir" ] || { echo "No activities directory"; exit 0; }
+  for f in "$activities_dir"/*.md; do
+    [ -e "$f" ] || continue
+    id="$(basename "$f" .md)"
+    kind="$(read_meta "$f" kind)"
+    plat="$(read_meta "$f" platform)"
+    [ -z "$plat" ] && plat="global"
+    status="pending"
+    if [ -f "$done_dir/$id.json" ]; then
+      status="$(marker_status "$id")"
+      [ -n "$status" ] || status="unknown"
+    fi
+    if [ "$only_pending" = "--pending" ]; then
+      [ "$status" = "pending" ] || continue
+      applies_here "$plat" || continue
+    fi
+    printf '%-28s %-14s %-7s %s\n' "$id" "$kind" "$plat" "$status"
+  done
+}
+
+cmd_show() {
+  local id="${1:-}" f="$activities_dir/${1:-}.md"
+  if [ ! -f "$f" ]; then
+    echo "No such activity: $id" >&2
+    exit 1
+  fi
+  cat "$f"
+  echo
+  if [ -f "$done_dir/$id.json" ]; then
+    echo "--- machine status ---"
+    cat "$done_dir/$id.json"
+  else
+    echo "--- machine status: pending ---"
+  fi
+}
+
+cmd_run() {
+  local f id kind plat run_cmd failures=0
+  [ -d "$activities_dir" ] || exit 0
+  for f in "$activities_dir"/*.md; do
+    [ -e "$f" ] || continue
+    id="$(basename "$f" .md)"
+    kind="$(read_meta "$f" kind)"
+    plat="$(read_meta "$f" platform)"
+    [ -z "$plat" ] && plat="global"
+    [ "$kind" = "deterministic" ] || continue
+    [ -f "$done_dir/$id.json" ] && continue
+    applies_here "$plat" || continue
+    run_cmd="$(read_meta "$f" run)"
+    if [ -z "$run_cmd" ]; then
+      echo "ERROR: $id is deterministic but has no run command" >&2
+      failures=$((failures + 1))
+      continue
+    fi
+    echo "Running $id"
+    if (cd "$repo_dir" && bash -c "$run_cmd"); then
+      mark "$id" "done" "deterministic run"
+    else
+      echo "ERROR: $id run command failed" >&2
+      failures=$((failures + 1))
+    fi
+  done
+  [ "$failures" -eq 0 ] || exit 1
+}
+
+cmd_mark() {
+  local id="${1:-}" status="${2:-}" note="${3:-}"
+  if [ -z "$id" ] || [ -z "$status" ]; then
+    echo "Usage: bin/activities mark <id> <done|skipped|failed> [note]" >&2
+    exit 1
+  fi
+  case "$status" in
+    done|skipped|failed) ;;
+    *) echo "Invalid status: $status (use done|skipped|failed)" >&2; exit 1 ;;
+  esac
+  if [ ! -f "$activities_dir/$id.md" ]; then
+    echo "No such activity: $id" >&2
+    exit 1
+  fi
+  mark "$id" "$status" "$note"
+  echo "Marked $id as $status (by $agent)"
+}
+
+case "${1:-}" in
+  list) shift; cmd_list "${1:-}" ;;
+  show) shift; cmd_show "${1:-}" ;;
+  run) cmd_run ;;
+  mark) shift; cmd_mark "${1:-}" "${2:-}" "${3:-}" ;;
+  -h|--help|*) usage; exit 1 ;;
+esac

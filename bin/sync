@@ -53,5 +53,14 @@ fi
 step "Applying npm manifest"
 "$repo_dir/bin/npm-install"
 
+if [ -x "$repo_dir/bin/activities" ]; then
+  step "Running deterministic activities"
+  "$repo_dir/bin/activities" run
+  pending="$("$repo_dir/bin/activities" list --pending | wc -l | tr -d ' ')"
+  if [ "$pending" != "0" ]; then
+    echo "$pending inferential activities pending — process with: bin/activities list --pending"
+  fi
+fi
+
 # shellcheck disable=SC2016
 printf '\nSync complete. Reload the shell: exec $SHELL\n'
