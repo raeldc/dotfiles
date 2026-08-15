@@ -44,6 +44,11 @@ These dotfiles run on both macOS and Linux machines. Platform-dependent config m
 - **mac** — macOS-only (Darwin)
 - **linux** — Linux-only
 
+Linux targets are typically **headless servers** — do not assume a desktop/GUI is present. Don't
+install desktop applications there, and when only part of a tool is useful on a server (a terminfo
+entry, a CLI, a shared library), install that part rather than the whole GUI package. Reason about
+whether each step makes sense on a headless box instead of mirroring what the Mac does.
+
 This applies to shell setup and packages alike:
 - Shell: `.global_profile` / `.mac_profile` / `.linux_profile`, dispatched from `.profile` via `uname`. Keep them POSIX sh compatible.
 - Packages: `manifests/homebrew.json` splits `taps` and `formulae` into `{global, mac, linux}` objects. `casks` are macOS-only and stay a flat list.
@@ -117,6 +122,21 @@ System changes are tracked as activities — migration-like units that agents ex
 Each activity file has front matter — `id`, `kind: deterministic | inferential`,
 `platform: global | mac | linux`, and for deterministic ones a single-line `run:` command — plus
 a prose body explaining intent for inference. The `id` must equal the filename (without `.md`).
+
+Manifest vs. activities — pick the right tool:
+- **Packages belong in the manifest** (`manifests/*.json`), which is *declarative desired state*: a
+  greenfield machine installs exactly what the manifest lists today. To remove a package, delete it
+  from the manifest — greenfield then never installs it, and history is not replayed.
+- **Activities are imperative and replay in order on every machine, including greenfield.** So never
+  use an activity to install a package: if you later add an activity to uninstall it, a fresh machine
+  would install-then-uninstall it. Reserve activities for state the manifest can't express — config
+  outside the repo, terminfo, untapping, removing `~/.tool` dirs.
+- **Make removal/cleanup activities guarded and idempotent** (`if brew list X`, `[ -e ]`, `rm -rf` a
+  maybe-absent path) so they are no-ops on machines that never had the thing. Then greenfield stays
+  clean even as activities accumulate: the manifest already omits the package, and the cleanup is a
+  no-op.
+- When the list grows long, supersede old entries with a fresh baseline (see
+  `0000-activity-baseline`) instead of leaving install/undo pairs to replay forever.
 
 Rules for agents:
 - After completing any operator-requested system change, write a new activity describing it,
