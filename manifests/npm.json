@@ -1,6 +1,7 @@
 {
   "node": "24.13.0",
   "packages": [
+    "@anthropic-ai/claude-code",
     "@earendil-works/pi-coding-agent",
     "@plannotator/pi-extension",
     "@tessl/cli",
