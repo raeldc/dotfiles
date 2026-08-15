@@ -1,7 +1,6 @@
 {
   "taps": {
     "global": [
-      "gastownhall/beads",
       "hashicorp/tap",
       "jundot/omlx",
       "nats-io/nats-tools",
@@ -27,7 +26,6 @@
       "autoconf",
       "bash-completion",
       "bat",
-      "bd",
       "brotli",
       "c-ares",
       "ca-certificates",
