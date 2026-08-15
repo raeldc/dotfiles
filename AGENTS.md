@@ -4,12 +4,11 @@ This is the canonical agent guide for this repo. Follow it as the source of trut
 
 ## About this Project
 
-This project is the "dotfiles" where most reusable config are stowed. When stowed is mention, it will
-mean the GNU stow, a command line tool for symlinking files. The common usecase is the symlinking of
-config files from a folder, usually in "~/.dotfiles". So when operator says "stow the config of this
-tool" it usually means use GNU stow to manage the config of that tool in this folder. This also means
-that when the operator tells you to check the config, the first place to look at is here in this 
-folder. If not found in this folder, that's when you venture out. 
+This project is the "dotfiles" repo where reusable config is stowed. "Stow" means GNU Stow, a
+command-line tool for symlinking files — the common use case is symlinking config files from a
+folder (usually `~/.dotfiles`) into `$HOME`. So when the operator says "stow the config of this
+tool," use GNU Stow to manage that tool's config in this folder. And when the operator asks you to
+check a config, look here first; only venture out if it isn't here.
 
 ## Repository Map
 Dotfiles mirror `$HOME` via symlinks. Root shell entrypoints live at the repo root; app configs live in `.config/`.
@@ -118,8 +117,8 @@ System changes are tracked as activities — migration-like units that agents ex
 - **Per-agent journal**: `~/.local/state/dotfiles/journal/<agent>.md` (local only, chmod 600). Agents never edit another agent's journal.
 
 Each activity file has front matter — `id`, `kind: deterministic | inferential`,
-`platform: global | mac | linux`, and for deterministic ones a `run:` command — plus a
-prose body explaining intent for inference. The `id` must equal the filename.
+`platform: global | mac | linux`, and for deterministic ones a single-line `run:` command — plus
+a prose body explaining intent for inference. The `id` must equal the filename (without `.md`).
 
 Rules for agents:
 - After completing any operator-requested system change, write a new activity describing it,
@@ -131,6 +130,17 @@ Rules for agents:
   or mark `skipped` with a reason.
 - Always identify yourself: `DOTFILES_AGENT=<name> bin/activities mark <id> <done|skipped|failed> "note"`.
 - Never mark an activity you haven't executed. `bin/sync` runs deterministic activities automatically.
+
+Authoring an activity:
+- **Pick the next number safely.** `git pull --ff-only` first, then use the next zero-padded 4-digit
+  id after the highest one in `activities/` (e.g. `0003-<slug>`). If your push is rejected because
+  another machine claimed that number, rebase and renumber your file — activities are independent and
+  order does not encode dependencies, so renumbering is safe.
+- **`run:` commands must be idempotent.** Re-running one must be a no-op when the change is already in
+  place (guard with `command -v`, `[ -f ]`, `mkdir -p`, etc.). Done-markers live in
+  `~/.local/state/dotfiles` (machine-local, never committed); if that directory is lost, every
+  activity re-runs, so a non-idempotent `run:` would double-apply.
+- Keep `run:` on one line — the front-matter parser is line-based, not full YAML.
 
 ## Local-Only Files
 Keep secrets and machine-specific config out of Git. Use `~/.local/bin/env` for per-machine exports.
