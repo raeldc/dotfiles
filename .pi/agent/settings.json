@@ -5,7 +5,8 @@
   "defaultThinkingLevel": "high",
   "packages": [
     "npm:pi-teams",
-    "npm:@plannotator/pi-extension"
+    "npm:@plannotator/pi-extension",
+    "npm:@ff-labs/pi-fff"
   ],
   "theme": "dark"
 }
