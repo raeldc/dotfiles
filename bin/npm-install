@@ -81,4 +81,24 @@ if [[ ${#packages[@]} -eq 0 ]]; then
   exit 0
 fi
 
-npm install -g "${packages[@]}"
+# Skip packages already present so re-runs are fast (delta, not a stored pointer:
+# checks reality each time, so it self-heals if a package was removed). A global
+# package "name" lives at "$(npm root -g)/name" ("@scope/name" for scoped ones).
+# Manifest entries carry no @version, so the bare name is the directory name.
+# To force upgrades, run `npm update -g` (or `npm install -g <pkg>`) directly.
+npm_root="$(npm root -g 2>/dev/null || true)"
+to_install=()
+for pkg in "${packages[@]}"; do
+  if [ -n "$npm_root" ] && [ -d "$npm_root/$pkg" ]; then
+    continue
+  fi
+  to_install+=("$pkg")
+done
+
+if [[ ${#to_install[@]} -eq 0 ]]; then
+  echo "All npm globals present (${#packages[@]} in manifest)"
+  exit 0
+fi
+
+echo "Installing ${#to_install[@]} missing npm global(s): ${to_install[*]}"
+npm install -g "${to_install[@]}"

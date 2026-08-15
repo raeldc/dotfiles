@@ -79,7 +79,12 @@ install_taps() {
   if [[ ${#taps[@]} -eq 0 ]]; then
     return 0
   fi
+  # Skip taps already present: re-tapping re-downloads the Homebrew API index
+  # (slow), so match the skip-if-installed behaviour used for formulae/casks.
+  local tapped
+  tapped="$(brew tap 2>/dev/null || true)"
   for tap in "${taps[@]}"; do
+    list_contains "$tapped" "$tap" && continue
     brew tap "$tap"
     # Newer Homebrew refuses to load untrusted third-party taps; trusting here
     # is the explicit opt-in from listing the tap in the manifest.
