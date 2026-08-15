@@ -1792,6 +1792,11 @@
   typeset -g POWERLEVEL9K_EXAMPLE_BACKGROUND=1
   # typeset -g POWERLEVEL9K_EXAMPLE_VISUAL_IDENTIFIER_EXPANSION='⭐'
 
+  # Optional machine-local color theme selected from ~/.local/bin/env.
+  if [[ ${P10K_COLOR_THEME:-} == terminal ]]; then
+    source "$HOME/.config/p10k/themes/terminal.zsh"
+  fi
+
   # Transient prompt works similarly to the builtin transient_rprompt option. It trims down prompt
   # when accepting a command line. Supported values:
   #
