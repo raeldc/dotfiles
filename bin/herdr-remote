@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Launch a remote herdr with a distinct theme so it is visually distinguishable
+# from the local instance (and from other remotes).
+#
+# herdr loads its config from $HERDR_CONFIG_PATH when set. We derive a themed
+# copy of the shared, stowed config on every launch — only the [theme] name is
+# overridden — so edits to the base always carry through (DRY, no duplication)
+# and nothing machine-specific has to live in the committed config.
+#
+# Usage: herdr-remote <ssh-target> [theme]   (theme defaults to gruvbox)
+set -euo pipefail
+
+usage() { echo "usage: herdr-remote <ssh-target> [theme]" >&2; exit 1; }
+
+target="${1:-}"
+[ -n "$target" ] || usage
+theme="${2:-gruvbox}"
+
+base="${HERDR_CONFIG_PATH:-$HOME/.config/herdr/config.toml}"
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/herdr"
+mkdir -p "$state_dir"
+slug="$(printf '%s' "$target" | tr -c 'A-Za-z0-9._-' '_')"
+gen="$state_dir/remote-$slug.toml"
+
+if [ -f "$base" ]; then
+  # Replace `name = "..."` only inside the [theme] section (up to the next
+  # [section] header). Other `name`-suffixed keys (dark_name, rename_tab, ...)
+  # do not start with `name` and are left untouched.
+  sed -E '/^\[theme\]/,/^\[/ s/^[[:space:]]*name[[:space:]]*=[[:space:]]*".*"/name = "'"$theme"'"/' \
+    "$base" > "$gen"
+else
+  printf '[theme]\nname = "%s"\n' "$theme" > "$gen"
+fi
+
+exec env HERDR_CONFIG_PATH="$gen" herdr --remote "$target" --remote-keybindings server

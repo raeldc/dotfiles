@@ -119,7 +119,7 @@ alias fvim='nvim $(fzf -m --preview="bat --color=always {}")'
 # alias vim='nvim'
 alias psmnd-cf="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev&"
 alias psmnd-vm="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev"
-alias devbox="herdr --remote rael@birdbox --remote-keybindings server"
+alias devbox="herdr-remote rael@birdbox gruvbox"
 
 # Kiro terminal integration
 if [ "$TERM_PROGRAM" = "kiro" ] && command -v kiro >/dev/null 2>&1 && [ -n "${ZSH_VERSION:-}" ]; then
