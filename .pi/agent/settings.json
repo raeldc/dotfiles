@@ -1,0 +1,11 @@
+{
+  "lastChangelogVersion": "0.84.2",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "glm-5.3",
+  "defaultThinkingLevel": "high",
+  "packages": [
+    "npm:pi-teams",
+    "npm:@plannotator/pi-extension"
+  ],
+  "theme": "dark"
+}

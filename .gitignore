@@ -8,4 +8,10 @@ lock.mdb
 .gemini
 .augment/*
 !.augment/settings.json
+.pi/*
+!.pi/agent
+.pi/agent/*
+!.pi/agent/settings.json
+!.pi/agent/keybindings.json
+!.pi/agent/extensions
 .env
