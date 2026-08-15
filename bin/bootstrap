@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+# Greenfield machine bootstrap: brew packages, node + npm globals,
+# standalone tools, and dotfile symlinks. Safe to re-run (idempotent).
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+os="$(uname -s)"
+
+step() { printf '\n==> %s\n' "$*"; }
+
+step "Homebrew packages (taps + formulae)"
+"$repo_dir/bin/brew-install" --taps
+"$repo_dir/bin/brew-install" --formulae
+
+if [[ "$os" == "Darwin" ]]; then
+  step "Homebrew casks"
+  "$repo_dir/bin/brew-install" --casks
+fi
+
+step "Node + npm globals"
+"$repo_dir/bin/npm-install"
+
+step "Bun"
+if [ ! -x "$HOME/.bun/bin/bun" ]; then
+  curl -fsSL https://bun.sh/install | bash
+else
+  echo "bun already installed at ~/.bun"
+fi
+
+step "Plannotator"
+if ! command -v plannotator >/dev/null 2>&1; then
+  curl -fsSL https://plannotator.ai/install.sh | sh
+else
+  echo "plannotator already installed"
+fi
+
+step "Stow dotfiles (no folding)"
+mkdir -p "$HOME/.config" "$HOME/.pi/agent"
+stow --no-folding --dir="$repo_dir" --target="$HOME" .
+
+cat <<'EOF'
+
+Bootstrap complete. Remaining manual/interactive steps — see docs/setup/manual.md:
+  1. SSH key + GitHub access (ssh-add, ssh config alias if used)
+  2. Editor/agent logins: pi auth, opencode, codex, etc.
+  3. Secrets: ~/.dotfiles/.env and ~/.local/bin/env
+EOF

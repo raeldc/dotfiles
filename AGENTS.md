@@ -52,6 +52,9 @@ This applies to shell setup and packages alike:
 
 ## OS-Specific Bootstrap
 Homebrew is the preferred package manager on both macOS and Linux.
+On a greenfield machine, after the OS prerequisites below, `bin/bootstrap` runs the full setup
+(brew packages, node + npm globals, bun, plannotator, stow). Manual/interactive steps (SSH, logins,
+secrets) are listed in `docs/setup/manual.md`.
 
 ### macOS
 1. Install Xcode CLT: `xcode-select --install`
@@ -71,6 +74,7 @@ Homebrew is the preferred package manager on both macOS and Linux.
 
 ## Package Manifest
 The package source of truth is `manifests/homebrew.json`. Do not edit generated lists in other files.
+Node and global npm packages are pinned in `manifests/npm.json` (`bin/npm-install` applies them).
 When installing software, prefer Homebrew first, then update `manifests/homebrew.json` to match the change.
 Per the Platform Split principle, `taps` and `formulae` use the `{global, mac, linux}` schema — classify each
 entry by where it works (`krunkit` is mac-only, for example). `casks` are macOS-only. `bin/brew-install`

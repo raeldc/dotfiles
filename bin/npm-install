@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# Install pinned node (via nvm) and global npm packages from manifests/npm.json
+set -euo pipefail
+
+manifest_path="${NPM_MANIFEST:-$HOME/.dotfiles/manifests/npm.json}"
+
+if ! command -v node >/dev/null && [ ! -s "$HOME/.nvm/nvm.sh" ]; then
+  echo "node not found and nvm not installed" >&2
+  echo "run: brew install nvm (or bin/bootstrap)" >&2
+  exit 1
+fi
+
+if [ ! -f "$manifest_path" ]; then
+  echo "Manifest not found: $manifest_path" >&2
+  exit 1
+fi
+
+# shellcheck source=/dev/null
+[ -s "$HOME/.nvm/nvm.sh" ] && . "$HOME/.nvm/nvm.sh"
+
+read_manifest() {
+  python3 - "$manifest_path" "$1" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], "r", encoding="utf-8") as handle:
+  data = json.load(handle)
+value = data.get(sys.argv[2])
+if value is not None:
+  print(value)
+PY
+}
+
+node_version="$(read_manifest node)"
+
+if [ -n "${node_version:-}" ]; then
+  if [ "$(node --version 2>/dev/null | sed 's/^v//')" != "$node_version" ]; then
+    nvm install "$node_version"
+    nvm alias default "$node_version"
+  else
+    echo "node $node_version already active"
+  fi
+fi
+
+packages=()
+while IFS= read -r line; do
+  packages+=("$line")
+done < <(python3 - "$manifest_path" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], "r", encoding="utf-8") as handle:
+  for item in json.load(handle).get("packages", []):
+    print(item)
+PY
+)
+
+if [[ ${#packages[@]} -eq 0 ]]; then
+  echo "No packages in manifest"
+  exit 0
+fi
+
+npm install -g "${packages[@]}"

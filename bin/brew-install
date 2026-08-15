@@ -63,7 +63,10 @@ PY
 }
 
 install_taps() {
-  mapfile -t taps < <(read_manifest taps)
+  local taps=()
+  while IFS= read -r line; do
+    taps+=("$line")
+  done < <(read_manifest taps)
   if [[ ${#taps[@]} -eq 0 ]]; then
     return 0
   fi
@@ -73,7 +76,10 @@ install_taps() {
 }
 
 install_formulae() {
-  mapfile -t formulae < <(read_manifest formulae)
+  local formulae=()
+  while IFS= read -r line; do
+    formulae+=("$line")
+  done < <(read_manifest formulae)
   if [[ ${#formulae[@]} -eq 0 ]]; then
     return 0
   fi
@@ -85,7 +91,10 @@ install_casks() {
     echo "Skipping casks: macOS only" >&2
     return 0
   fi
-  mapfile -t casks < <(read_manifest casks)
+  local casks=()
+  while IFS= read -r line; do
+    casks+=("$line")
+  done < <(read_manifest casks)
   if [[ ${#casks[@]} -eq 0 ]]; then
     return 0
   fi

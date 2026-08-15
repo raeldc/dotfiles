@@ -15,7 +15,11 @@
    ```
 
 ## Packages
-Install taps, formulae, then casks from `manifests/homebrew.json`:
+All of the steps below (and more) are handled by the single bootstrap entrypoint:
+```sh
+bin/bootstrap
+```
+Or run individually — taps, formulae, then casks from `manifests/homebrew.json`:
 ```sh
 bin/brew-install --taps
 bin/brew-install --formulae

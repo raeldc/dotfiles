@@ -69,6 +69,10 @@ if [ -f "$HOME/.dotfiles/.env" ]; then
   set +a
 fi
 
+# Per-machine local env (see docs/local/README.md)
+# shellcheck source=/dev/null
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
+
 # fzf
 if command -v fzf >/dev/null 2>&1; then
   if [ -n "${ZSH_VERSION:-}" ]; then
