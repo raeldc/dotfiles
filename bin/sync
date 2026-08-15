@@ -48,6 +48,11 @@ restow_output="$(stow --no-folding --restow --dir="$repo_dir" --target="$HOME" .
   stow --no-folding --restow --dir="$repo_dir" --target="$HOME" .
 }
 
+if command -v herdr >/dev/null 2>&1 && [ -x "$repo_dir/bin/herdr-config" ]; then
+  step "Rendering herdr config (template + this machine's theme)"
+  "$repo_dir/bin/herdr-config" || echo "herdr-config failed — see above" >&2
+fi
+
 step "Applying Homebrew manifest"
 "$repo_dir/bin/brew-install" --taps
 "$repo_dir/bin/brew-install" --formulae

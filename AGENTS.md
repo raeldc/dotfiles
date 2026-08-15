@@ -31,6 +31,7 @@ Use this to jump straight to the right file for common instructions.
 - Alacritty: `.config/alacritty/`
 - Ghostty: `.config/ghostty/`
 - OpenCode: `.config/opencode/`
+- Herdr: `.config/herdr/config.template.toml` — tracked **template** only. `bin/herdr-config` renders a machine-local `~/.config/herdr/config.toml` (git-untracked, not stowed) from it, preserving this machine's `[theme]` so in-app theme changes (`prefix+b s`) never churn the repo. `bin/sync`/`bin/bootstrap` re-render it. Do not stow the live config.
 - Pi: `.pi/agent/` (settings, keybindings, extensions; auth/sessions stay local)
 - Cursor: `cursor/Library/Application Support/Cursor/User/`
 - JetBrains GoLand: `jetbrains/Library/Application Support/JetBrains/GoLand2025.2/`

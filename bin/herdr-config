@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+# Render the machine-local herdr config from the tracked template, preserving
+# this machine's chosen theme.
+#
+# herdr has no config layering (herdr.dev/docs/config-reference): it reads a
+# single config.toml and writes theme changes (the prefix+b s settings window)
+# back into that same file. To keep the repo holding shared defaults while the
+# theme stays per-machine and never churns Git, the live config is a plain
+# machine-local file: everything comes from the committed template, but the
+# [theme] / [theme.custom] sections are carried over from the existing live
+# config. So `prefix+b s` writes stay local, and template edits (keybindings,
+# etc.) still propagate on the next render.
+#
+# Idempotent. Run by bin/sync and bin/bootstrap; safe to run by hand.
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+template="$repo_dir/.config/herdr/config.template.toml"
+live="$HOME/.config/herdr/config.toml"
+
+[ -f "$template" ] || { echo "herdr-config: template not found: $template" >&2; exit 1; }
+
+# Carry theme over from the current live config; fall back to the template's
+# theme on a fresh machine (no live config, or the live path is still a symlink
+# into the repo from the old stow layout — treat that as "no local theme yet").
+theme_src="$template"
+if [ -f "$live" ] && [ ! -L "$live" ]; then
+  theme_src="$live"
+fi
+
+mkdir -p "$(dirname "$live")"
+tmp="$(mktemp)"
+trap 'rm -f "$tmp"' EXIT
+
+python3 - "$template" "$theme_src" > "$tmp" <<'PY'
+import re, sys
+
+def split(text):
+    pre, sections, cur = [], [], None
+    for line in text.splitlines():
+        if re.match(r'^\s*\[', line):
+            cur = [line.strip(), []]
+            sections.append(cur)
+        elif cur is None:
+            pre.append(line)
+        else:
+            cur[1].append(line)
+    return pre, sections
+
+def is_theme(header):
+    name = header.strip().strip('[]')
+    return name == 'theme' or name.startswith('theme.')
+
+template = open(sys.argv[1], encoding='utf-8').read()
+source   = open(sys.argv[2], encoding='utf-8').read()
+
+theme_sections = [s for s in split(source)[1] if is_theme(s[0])]
+
+pre, tmpl = split(template)
+out = list(pre)
+inserted = False
+for header, body in tmpl:
+    if is_theme(header):
+        if not inserted:                       # splice theme sections in place
+            for th, tb in theme_sections:
+                out.append(th); out.extend(tb)
+            inserted = True
+        # drop the template's own theme sections
+    else:
+        out.append(header); out.extend(body)
+if not inserted:                               # template had no [theme] at all
+    for th, tb in theme_sections:
+        out.append(th); out.extend(tb)
+
+sys.stdout.write('\n'.join(out).rstrip('\n') + '\n')
+PY
+
+mv "$tmp" "$live"
+trap - EXIT
+echo "herdr-config: rendered $live (theme carried from ${theme_src##*/})"

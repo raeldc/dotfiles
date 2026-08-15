@@ -38,6 +38,11 @@ step "Stow dotfiles (no folding)"
 mkdir -p "$HOME/.config" "$HOME/.pi/agent"
 stow --no-folding --dir="$repo_dir" --target="$HOME" .
 
+if command -v herdr >/dev/null 2>&1 && [ -x "$repo_dir/bin/herdr-config" ]; then
+  step "Rendering herdr config (template + this machine's theme)"
+  "$repo_dir/bin/herdr-config" || echo "herdr-config failed — see above" >&2
+fi
+
 if [ -x "$repo_dir/bin/activities" ]; then
   step "Running deterministic activities"
   DOTFILES_AGENT=bootstrap "$repo_dir/bin/activities" run || echo "some activities failed — see above" >&2
