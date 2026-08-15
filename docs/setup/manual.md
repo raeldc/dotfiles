@@ -15,7 +15,7 @@ Run each and follow the browser prompt:
 pi login          # or: pi auth
 gh auth login
 ```
-Other agents (opencode, codex, claude-code, gemini, auggie) — log in on first use
+Other agents (opencode, codex, claude-code, auggie) — log in on first use
 or import keys via each tool's auth flow.
 
 ## Secrets

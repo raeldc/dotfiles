@@ -35,7 +35,6 @@ Use this to jump straight to the right file for common instructions.
 - Cursor: `cursor/Library/Application Support/Cursor/User/`
 - JetBrains GoLand: `jetbrains/Library/Application Support/JetBrains/GoLand2025.2/`
 - Antigravity: `antigravity/`
-- Gemini: `.gemini/`
 - Kilocode: `.kilocode/`
 - Helper scripts: `bin/`
 - Local-only env: `~/.local/bin/env`
