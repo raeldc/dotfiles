@@ -157,6 +157,9 @@ Rules for agents:
 - When the operator says "sync": run `bin/sync`, then process what's left with
   `bin/activities list --pending` — for each inferential activity, adapt it to this platform
   or mark `skipped` with a reason.
+- After a sync, explicitly surface every action the operator still needs to take. Include shell
+  reloads needed to activate newly installed shell integrations, pending/manual activities,
+  warnings that require a decision, and any failed or skipped work. If nothing remains, say so.
 - Always identify yourself: `DOTFILES_AGENT=<name> bin/activities mark <id> <done|skipped|failed> "note"`.
 - Never mark an activity you haven't executed. `bin/sync` runs deterministic activities automatically.
 
