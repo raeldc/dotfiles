@@ -20,7 +20,28 @@ git -C "$repo_dir" pull --ff-only
 
 step "Restowing dotfiles"
 mkdir -p "$HOME/.config" "$HOME/.pi/agent"
-stow --no-folding --restow --dir="$repo_dir" --target="$HOME" .
+restow_output="$(stow --no-folding --restow --dir="$repo_dir" --target="$HOME" . 2>&1)" || {
+  # Local real files blocking stow (tools like pi rewrite configs in place,
+  # replacing symlinks). Back them up and let the repo version win.
+  conflicts="$(printf '%s\n' "$restow_output" | sed -n 's/.*over existing target \([^ ]*\).*/\1/p')"
+  if [ -z "$conflicts" ]; then
+    printf '%s\n' "$restow_output" >&2
+    exit 1
+  fi
+  backup_dir="$HOME/.local/share/dotfiles-backup/$(date +%Y%m%d-%H%M%S)"
+  while IFS= read -r rel; do
+    [ -n "$rel" ] || continue
+    if cmp -s "$HOME/$rel" "$repo_dir/$rel"; then
+      echo "identical to repo, relinking: $rel"
+    else
+      echo "differs from repo, backed up: $rel -> $backup_dir/$rel"
+      mkdir -p "$backup_dir/$(dirname "$rel")"
+      cp "$HOME/$rel" "$backup_dir/$rel"
+    fi
+    rm "$HOME/$rel"
+  done <<< "$conflicts"
+  stow --no-folding --restow --dir="$repo_dir" --target="$HOME" .
+}
 
 step "Applying Homebrew manifest"
 "$repo_dir/bin/brew-install" --taps
