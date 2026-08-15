@@ -100,6 +100,15 @@ Use GNU Stow for all dotfile linking.
 stow --dir="$HOME/.dotfiles" --target="$HOME" .
 ```
 
+## Syncing Machines
+After changing dotfiles on one machine, commit and push. Then apply everywhere else:
+```sh
+bin/sync
+```
+It pulls (ff-only, aborts if local changes are uncommitted), restows with `--no-folding`,
+and reapplies the Homebrew and npm manifests. `bin/bootstrap` is for greenfield machines;
+`bin/sync` is for existing ones.
+
 ## Local-Only Files
 Keep secrets and machine-specific config out of Git. Use `~/.local/bin/env` for per-machine exports.
 See `docs/local/README.md` for the contract and examples.

@@ -45,3 +45,9 @@ Optionally also `~/.dotfiles/.env` for repo-local secrets (gitignored, sourced a
 - Shell: `zsh -n ~/.zshrc && zsh -i -c exit`
 - Neovim: `nvim --headless "+Lazy sync" +qa`
 - Zed JSON: `jq . .config/zed/settings.json`
+
+## Staying in sync
+After changes are committed and pushed from one machine, apply them here:
+```sh
+bin/sync
+```

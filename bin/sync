@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Sync this machine with the dotfiles repo: pull, restow, reapply manifests.
+# Run this on any machine after changes are committed and pushed from another.
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+os="$(uname -s)"
+
+step() { printf '\n==> %s\n' "$*"; }
+
+step "Checking repo state"
+if ! git -C "$repo_dir" diff --quiet || ! git -C "$repo_dir" diff --cached --quiet; then
+  echo "Uncommitted changes in $repo_dir — commit and push them first:" >&2
+  git -C "$repo_dir" status --short >&2
+  exit 1
+fi
+
+step "Pulling latest"
+git -C "$repo_dir" pull --ff-only
+
+step "Restowing dotfiles"
+mkdir -p "$HOME/.config" "$HOME/.pi/agent"
+stow --no-folding --restow --dir="$repo_dir" --target="$HOME" .
+
+step "Applying Homebrew manifest"
+"$repo_dir/bin/brew-install" --taps
+"$repo_dir/bin/brew-install" --formulae
+if [[ "$os" == "Darwin" ]]; then
+  "$repo_dir/bin/brew-install" --casks
+fi
+
+step "Applying npm manifest"
+"$repo_dir/bin/npm-install"
+
+# shellcheck disable=SC2016
+printf '\nSync complete. Reload the shell: exec $SHELL\n'
