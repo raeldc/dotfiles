@@ -120,7 +120,9 @@ stow --dir="$HOME/.dotfiles" --target="$HOME" .
 ```
 
 ## Syncing Machines
-After changing dotfiles on one machine, commit and push. Then apply everywhere else:
+Agents commit; the operator pushes. Never run `git push` yourself — leave the commit on the branch
+and tell the operator it's ready to push.
+After changing dotfiles on one machine, commit and tell the operator to push. Then apply everywhere else:
 ```sh
 bin/sync
 ```
@@ -170,7 +172,7 @@ Rules for agents:
 
 Authoring an activity:
 - **Pick the next number safely.** `git pull --ff-only` first, then use the next zero-padded 4-digit
-  id after the highest one in `activities/` (e.g. `0003-<slug>`). If your push is rejected because
+  id after the highest one in `activities/` (e.g. `0003-<slug>`). If the operator's push is rejected because
   another machine claimed that number, rebase and renumber your file — activities are independent and
   order does not encode dependencies, so renumbering is safe.
 - **`run:` commands must be idempotent.** Re-running one must be a no-op when the change is already in
