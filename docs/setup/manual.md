@@ -8,6 +8,8 @@ greenfield machine should prompt the operator for each item below.
 2. Add to ssh-agent and GitHub, then test: `ssh -T git@github.com`
 3. If using the `rael.github.com` host alias, add it to `~/.ssh/config` (machine-local, never commit)
    and update the origin URL (see `shared.md`).
+4. Set git identity (fresh machines have none; commits fail without it):
+   `git config --global user.name "rael" && git config --global user.email "rael@lear.one"`
 
 ## Tool logins / auth
 Run each and follow the browser prompt:
