@@ -34,6 +34,10 @@ arm64, 2026-08-16):
    deterministic activities.
 5. **Sudo-requiring remainder**: login shell (0008), /usr/local/bin/zsh (0009),
    timezone (0010). See below for how to drive sudo from an agent.
+6. **Render the herdr config**: `bin/herdr-config`. On first sync/bootstrap the
+   render step is skipped because herdr is only installed by the brew manifest
+   later in the same run; the next sync would render it, but run it once by hand
+   to avoid waiting.
 
 Agent notes for sudo on greenfield:
 - Agent bash sessions are non-TTY: sudo cannot prompt, and sudo timestamps do
