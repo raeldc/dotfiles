@@ -17,10 +17,20 @@ way.
 Check first:
   infocmp xterm-ghostty >/dev/null 2>&1 && echo present
 
-If missing, install just the terminfo entry for the current user (no app, no
-root):
-  curl -fsSL https://raw.githubusercontent.com/ghostty-org/ghostty/main/src/terminfo/ghostty.terminfo | tic -x -
+If missing, recompile the distro's `ghostty` entry under the `xterm-ghostty`
+name into the user terminfo db (no app, no root). ncurses-term (Ubuntu/Debian)
+ships a `ghostty` entry but not the `xterm-ghostty` name Ghostty actually
+exports as TERM:
+  infocmp ghostty | sed 's/^ghostty|/xterm-ghostty|/' | tic -x -
 
-Prefer a distro package that ships the terminfo entry if one exists. If you
-can't install it, mark skipped — the xterm-256color fallback keeps the shell
-working. Not applicable on macOS (the Ghostty cask ships terminfo).
+Verify with `infocmp xterm-ghostty` (lands in ~/.terminfo/x/).
+
+NOTE: the old recipe (`curl .../ghostty-org/ghostty/main/src/terminfo/ghostty.terminfo
+| tic -x -`) is dead — upstream removed the static file; the entry is now
+generated from Zig source at build time. Do not resurrect that URL.
+
+If the distro has no `ghostty` entry either (older ncurses), extract the
+`xterm-ghostty` stanza from ncurses' terminfo.src or copy ~/.terminfo from a
+machine that has it. If you can't install it, mark skipped — the xterm-256color
+fallback keeps the shell working. Not applicable on macOS (the Ghostty cask
+ships terminfo).
