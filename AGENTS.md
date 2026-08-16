@@ -69,12 +69,16 @@ secrets) are listed in `docs/setup/manual.md`.
 5. Link dotfiles into `$HOME` using GNU Stow (see Linking Dotfiles)
 
 ### Linux
-1. Install Homebrew (Linuxbrew) first:
-   `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-2. Ensure Homebrew on PATH (Linuxbrew install output provides the eval line)
-3. Install packages from `manifests/homebrew.json` (formulae only; skip casks)
-4. Link dotfiles into `$HOME` using GNU Stow (see Linking Dotfiles)
-5. If a dependency is missing for Homebrew itself, use the system package manager only to satisfy that prerequisite, then revert to Homebrew
+1. Install OS prerequisites via apt (the only apt step): `build-essential procps curl file git unzip`
+2. Pre-create the prefix so the installer needs no sudo: `sudo install -d -o "$USER" -g "$(id -gn)" -m 0755 /home/linuxbrew`
+3. Install Homebrew (Linuxbrew) — non-interactive and detached; the initial git fetch is ~450 MB and slow:
+   `nohup env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /tmp/brew-install.log 2>&1 &`
+   (x86_64 and aarch64 only; re-run the same command if it dies mid-fetch — it resumes)
+4. Ensure Homebrew on PATH: `eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"`
+5. Run `bin/bootstrap` — it applies `manifests/homebrew.json` (formulae only; skips casks), installs GNU Stow from the manifest, links dotfiles (see Linking Dotfiles), and runs deterministic activities
+6. If a dependency is missing for Homebrew itself, use the system package manager only to satisfy that prerequisite, then revert to Homebrew
+
+`bin/sync` is NOT the greenfield entrypoint — it assumes brew + stow already exist. Full runbook: `activities/0000-activity-baseline.md`.
 
 ## Package Manifest
 The package source of truth is `manifests/homebrew.json`. Do not edit generated lists in other files.
