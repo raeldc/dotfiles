@@ -6,7 +6,8 @@
   "packages": [
     "npm:pi-teams",
     "npm:@plannotator/pi-extension",
-    "npm:@ff-labs/pi-fff"
+    "npm:@ff-labs/pi-fff",
+    "npm:@qraxiss/pi-gemini-auth"
   ],
   "theme": "dark"
 }
