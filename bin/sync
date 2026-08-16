@@ -19,6 +19,17 @@ step "Pulling latest"
 git -C "$repo_dir" pull --ff-only
 
 step "Restowing dotfiles"
+# Greenfield: stow comes from the brew manifest, which runs below — install it
+# on demand so first-time syncs work. Without brew too, this is a pre-runbook
+# machine: point at the greenfield runbook.
+if ! command -v stow >/dev/null 2>&1; then
+  if command -v brew >/dev/null 2>&1; then
+    brew install stow
+  else
+    echo "stow (and brew) missing — greenfield machine? Follow activities/0000-activity-baseline.md first" >&2
+    exit 1
+  fi
+fi
 mkdir -p "$HOME/.config" "$HOME/.pi/agent"
 restow_output="$(stow --no-folding --restow --dir="$repo_dir" --target="$HOME" . 2>&1)" || {
   # Local real files blocking stow (tools like pi rewrite configs in place,
