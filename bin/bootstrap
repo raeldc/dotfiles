@@ -8,6 +8,20 @@ os="$(uname -s)"
 
 step() { printf '\n==> %s\n' "$*"; }
 
+# Greenfield guard: bootstrap needs brew (manifests) and expects the OS-level
+# prereqs done first. See "Greenfield runbook" in activities/0000-activity-baseline.md.
+if ! command -v brew >/dev/null 2>&1; then
+  cat >&2 <<'EOF'
+brew not found on PATH. Finish the OS prerequisites first (Linux):
+  sudo apt-get install -y build-essential procps curl file git unzip
+  sudo install -d -o "$USER" -g "$(id -gn)" -m 0755 /home/linuxbrew
+  nohup env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /tmp/brew-install.log 2>&1 &
+  eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+Then re-run bin/bootstrap.
+EOF
+  exit 1
+fi
+
 step "Homebrew packages (taps + formulae)"
 "$repo_dir/bin/brew-install" --taps
 "$repo_dir/bin/brew-install" --formulae
@@ -29,7 +43,8 @@ fi
 
 step "Plannotator"
 if ! command -v plannotator >/dev/null 2>&1; then
-  curl -fsSL https://plannotator.ai/install.sh | sh
+  # bash, not sh: the installer uses bashisms and dash (Ubuntu sh) chokes.
+  curl -fsSL https://plannotator.ai/install.sh | bash
 else
   echo "plannotator already installed"
 fi
