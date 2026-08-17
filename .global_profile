@@ -114,17 +114,7 @@ fi
 
 # aliases
 command -v eza >/dev/null 2>&1 && alias ls='eza --color=always --icons=always --no-time --no-permissions --no-user'
-lzd() {
-  if [ -n "${DOCKER_HOST:-}" ]; then
-    lazydocker "$@"
-    return
-  fi
-  if [ "$(uname -s)" = "Linux" ]; then
-    DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock" lazydocker "$@"
-  else
-    lazydocker "$@"
-  fi
-}
+alias lzd='lazydocker'
 alias fvim='nvim $(fzf -m --preview="bat --color=always {}")'
 # alias vim='nvim'
 alias psmnd-cf="ssh -o ProxyCommand=\"cloudflared access ssh --hostname rael.psmnd.dev\" rael@rael.psmnd.dev&"

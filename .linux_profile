@@ -5,3 +5,6 @@
 if [ -z "${HOMEBREW_REPOSITORY:-}" ] && [ -x /home/linuxbrew/.linuxbrew/bin/brew ]; then
   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
 fi
+
+# podman rootless socket — docker-API clients (docker CLI, lazydocker) talk to it directly
+export DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock"
