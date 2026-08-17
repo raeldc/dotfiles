@@ -2,6 +2,9 @@
 # differ. Herdr's native Ctrl-b prefix and Ctrl-b Ctrl-b passthrough remain.
 onboarding = false
 
+[experimental]
+pane_history = true
+
 [terminal]
 default_shell = "zsh"
 shell_mode = "login"
