@@ -119,12 +119,11 @@ lzd() {
     lazydocker "$@"
     return
   fi
-  _lzd_socket="$(podman machine inspect --format '{{.ConnectionInfo.PodmanSocket.Path}}' 2>/dev/null)" || {
+  if [ "$(uname -s)" = "Linux" ]; then
+    DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock" lazydocker "$@"
+  else
     lazydocker "$@"
-    return
-  }
-  DOCKER_HOST="unix://$_lzd_socket" lazydocker "$@"
-  unset _lzd_socket
+  fi
 }
 alias fvim='nvim $(fzf -m --preview="bat --color=always {}")'
 # alias vim='nvim'

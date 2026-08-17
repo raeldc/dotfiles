@@ -31,11 +31,6 @@ if [[ "$os" == "Darwin" ]]; then
   "$repo_dir/bin/brew-install" --casks
 fi
 
-if [[ "$os" == "Linux" ]]; then
-  step "Podman Machine helper"
-  "$repo_dir/bin/gvproxy-install"
-fi
-
 step "Node + npm globals"
 "$repo_dir/bin/npm-install"
 
@@ -64,7 +59,7 @@ if command -v herdr >/dev/null 2>&1 && [ -x "$repo_dir/bin/herdr-config" ]; then
 fi
 
 if command -v podman >/dev/null 2>&1; then
-  step "Setting up Podman Machine"
+  step "Setting up Podman"
   "$repo_dir/bin/podman-setup"
 fi
 

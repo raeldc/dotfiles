@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+[[ "$(uname -s)" == "Linux" ]] || exit 0
+
+machine="podman-machine-default"
+if podman machine inspect "$machine" >/dev/null 2>&1; then
+  podman machine stop "$machine" >/dev/null 2>&1 || true
+  podman machine rm --force "$machine"
+fi
+
+if [[ -e /usr/local/libexec/podman/gvproxy ]]; then
+  sudo rm -f /usr/local/libexec/podman/gvproxy
+fi
+
+containers_conf="$HOME/.config/containers/containers.conf"
+if [[ -L "$containers_conf" && "$(readlink "$containers_conf")" == *".dotfiles/.config/containers/containers.conf" ]]; then
+  rm "$containers_conf"
+fi
+
+if id -nG "$USER" | tr ' ' '\n' | grep -Fxq kvm; then
+  sudo gpasswd --delete "$USER" kvm
+fi
+
+for formula in qemu virtiofsd; do
+  brew list --formula "$formula" >/dev/null 2>&1 && brew uninstall "$formula"
+done
+brew autoremove
+
+runtime_dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+pkill -f "^podman system service --time=0 unix://$runtime_dir/podman/podman.sock$" 2>/dev/null || true
+"$(dirname "$0")/podman-setup"

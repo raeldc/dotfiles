@@ -109,8 +109,6 @@
       "slp/krunkit/krunkit"
     ],
     "linux": [
-      "qemu",
-      "virtiofsd",
       "zsh"
     ]
   },

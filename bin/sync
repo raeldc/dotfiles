@@ -71,13 +71,8 @@ if [[ "$os" == "Darwin" ]]; then
   "$repo_dir/bin/brew-install" --casks
 fi
 
-if [[ "$os" == "Linux" ]]; then
-  step "Podman Machine helper"
-  "$repo_dir/bin/gvproxy-install"
-fi
-
 if command -v podman >/dev/null 2>&1; then
-  step "Setting up Podman Machine"
+  step "Setting up Podman"
   "$repo_dir/bin/podman-setup"
 fi
 
