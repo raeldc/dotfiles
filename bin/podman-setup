@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+machine="${PODMAN_MACHINE:-podman-machine-default}"
+
+if ! command -v podman >/dev/null 2>&1; then
+  echo "podman is not installed" >&2
+  exit 1
+fi
+
+if [[ "$(uname -s)" == "Linux" && -e /dev/kvm && ! -r /dev/kvm ]]; then
+  if ! getent group kvm >/dev/null; then
+    echo "/dev/kvm exists but the kvm group does not" >&2
+    exit 1
+  fi
+  sudo usermod -aG kvm "$USER"
+  exec sg kvm -c "PODMAN_MACHINE='$machine' '$0'"
+fi
+
+if ! podman machine inspect "$machine" >/dev/null 2>&1; then
+  podman machine init "$machine"
+fi
+
+state="$(podman machine inspect --format '{{.State}}' "$machine")"
+if [[ "$state" != "running" ]]; then
+  podman machine start "$machine"
+fi
+
+podman machine inspect --format '{{.Name}}: {{.State}}' "$machine"
