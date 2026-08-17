@@ -73,7 +73,7 @@ fi
 
 if command -v podman >/dev/null 2>&1; then
   step "Setting up Podman"
-  "$repo_dir/bin/podman-setup"
+  "$repo_dir/bin/podman-setup" || echo "podman-setup failed — see above" >&2
 fi
 
 step "Applying npm manifest"

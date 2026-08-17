@@ -69,7 +69,7 @@ secrets) are listed in `docs/setup/manual.md`.
 5. Link dotfiles into `$HOME` using GNU Stow (see Linking Dotfiles)
 
 ### Linux
-1. Install OS prerequisites via apt (the only apt step): `build-essential procps curl file git unzip`
+1. Install OS prerequisites via apt (the only apt step): `build-essential procps curl file git unzip uidmap`
 2. Pre-create the prefix so the installer needs no sudo: `sudo install -d -o "$USER" -g "$(id -gn)" -m 0755 /home/linuxbrew`
 3. Install Homebrew (Linuxbrew) — non-interactive and detached; the initial git fetch is ~450 MB and slow:
    `nohup env NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" > /tmp/brew-install.log 2>&1 &`

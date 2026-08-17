@@ -19,8 +19,9 @@ entrypoint. On a fresh Linux machine, do this instead (learned on Ubuntu 26.04
 arm64, 2026-08-16):
 
 1. **OS prerequisites via apt** (the only apt installs; everything else is brew):
-   `sudo apt-get install -y build-essential procps curl file git unzip`
-   (`unzip` is needed by the bun installer later.)
+   `sudo apt-get install -y build-essential procps curl file git unzip uidmap`
+   (`unzip` is needed by the bun installer later; `uidmap` provides
+   `newuidmap`/`newgidmap` that rootless podman requires on Linux.)
 2. **Pre-create the Homebrew prefix** so the installer needs no sudo:
    `sudo install -d -o "$USER" -g "$(id -gn)" -m 0755 /home/linuxbrew`
 3. **Install Homebrew detached and non-interactively.** The installer fetches
