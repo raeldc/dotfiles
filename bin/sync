@@ -76,6 +76,11 @@ if [[ "$os" == "Linux" ]]; then
   "$repo_dir/bin/gvproxy-install"
 fi
 
+if command -v podman >/dev/null 2>&1; then
+  step "Setting up Podman Machine"
+  "$repo_dir/bin/podman-setup"
+fi
+
 step "Applying npm manifest"
 "$repo_dir/bin/npm-install"
 

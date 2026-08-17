@@ -63,6 +63,11 @@ if command -v herdr >/dev/null 2>&1 && [ -x "$repo_dir/bin/herdr-config" ]; then
   "$repo_dir/bin/herdr-config" || echo "herdr-config failed — see above" >&2
 fi
 
+if command -v podman >/dev/null 2>&1; then
+  step "Setting up Podman Machine"
+  "$repo_dir/bin/podman-setup"
+fi
+
 if [ -x "$repo_dir/bin/activities" ]; then
   step "Running deterministic activities"
   DOTFILES_AGENT=bootstrap "$repo_dir/bin/activities" run || echo "some activities failed — see above" >&2
