@@ -29,3 +29,6 @@ _zsh_share="${HOMEBREW_PREFIX:-/opt/homebrew}/share"
 # Syntax highlighting must be sourced last
 [ -f "$_zsh_share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ] && source "$_zsh_share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 unset _zsh_share
+
+# bun completions
+[ -s "/home/rael/.bun/_bun" ] && source "/home/rael/.bun/_bun"
