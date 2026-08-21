@@ -1,6 +1,7 @@
 {
   "taps": {
     "global": [
+      "can1357/tap",
       "hashicorp/tap",
       "nats-io/nats-tools",
       "netbirdio/tap",
@@ -20,6 +21,7 @@
       "atuin",
       "axel",
       "bat",
+      "can1357/tap/omp",
       "cloudflared",
       "composer",
       "deno",
