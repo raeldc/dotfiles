@@ -15,3 +15,7 @@ case "$(uname -s)" in
     [ -f "$HOME/.linux_profile" ] && . "$HOME/.linux_profile"
     ;;
 esac
+
+# Machine-local commands and aliases (gitignored, see docs/local/README.md)
+# shellcheck source=/dev/null
+[ -f "$HOME/.local_profile" ] && . "$HOME/.local_profile"

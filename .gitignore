@@ -13,3 +13,4 @@ lock.mdb
 !.pi/agent/keybindings.json
 !.pi/agent/extensions
 .env
+.local_profile
