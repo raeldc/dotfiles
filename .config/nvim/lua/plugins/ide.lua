@@ -29,13 +29,13 @@ return {
         after = "mason.nvim",
         opts = {
             ensure_installed = {
-                "css-lsp",
-                "eslint-lsp",
+                "cssls",
+                "eslint",
                 "gopls",
-                "html-lsp",
-                "lua-language-server",
+                "html",
+                "lua_ls",
                 "pyright",
-                "typescript-language-server",
+                "ts_ls",
             },
         },
     },
