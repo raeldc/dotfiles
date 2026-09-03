@@ -27,6 +27,17 @@ return {
         'williamboman/mason-lspconfig.nvim',
         lazy = false,
         after = "mason.nvim",
+        opts = {
+            ensure_installed = {
+                "css-lsp",
+                "eslint-lsp",
+                "gopls",
+                "html-lsp",
+                "lua-language-server",
+                "pyright",
+                "typescript-language-server",
+            },
+        },
     },
     { 'mfussenegger/nvim-dap' },
     {

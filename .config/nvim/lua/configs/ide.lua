@@ -1,7 +1,7 @@
 local on_init = require("nvchad.configs.lspconfig").on_init
 local capabilities = require("nvchad.configs.lspconfig").capabilities
 
-local servers = { "pyright", "ts_ls", "eslint" }
+local servers = { "pyright", "ts_ls", "eslint", "gopls" }
 
 local on_attach = function(client, bufnr)
     local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
