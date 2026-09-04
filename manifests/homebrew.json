@@ -68,6 +68,7 @@
       "pipx",
       "pnpm",
       "podman",
+      "podman-tui",
       "postgresql@14",
       "postgresql@16",
       "powerlevel10k",
