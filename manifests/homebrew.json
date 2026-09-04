@@ -67,8 +67,6 @@
       "p7zip",
       "pipx",
       "pnpm",
-      "podman",
-      "podman-tui",
       "postgresql@14",
       "postgresql@16",
       "powerlevel10k",
@@ -110,6 +108,7 @@
       "bash-completion",
       "cocoapods",
       "mole",
+      "podman",
       "slp/krunkit/krunkit"
     ],
     "linux": [

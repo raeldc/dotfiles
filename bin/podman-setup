@@ -1,28 +1,140 @@
 #!/usr/bin/env bash
+# bin/podman-setup — converge the Podman API socket + docker compatibility
+# for THIS machine. Dispatches by platform (see activity 0020):
+#   macOS .......... podman machine (VM); DOCKER_HOST points at its socket.
+#   Arch Linux ..... pacman podman (+ podman-docker shim); native
+#                    podman.socket unit, socket-activated.
+#   other Linux .... Homebrew podman + dotfiles-managed podman.socket /
+#   (e.g. Ubuntu)    podman.service units (socket-activated).
+#
+# Idempotent: re-running converges state. Safe via bin/sync, bin/bootstrap,
+# and the deterministic activity runner (which executes from the repo root).
 set -euo pipefail
 
-if ! command -v podman >/dev/null 2>&1; then
-  echo "podman is not installed" >&2
-  exit 1
-fi
+socket="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock"
 
-if [[ "$(uname -s)" == "Linux" ]]; then
-  if ! command -v newuidmap >/dev/null 2>&1 || ! command -v newgidmap >/dev/null 2>&1; then
-    echo "rootless podman needs newuidmap/newgidmap (uidmap package). Run: sudo apt-get install -y uidmap" >&2
-    exit 1
-  fi
-  brew services start podman >/dev/null
-  socket="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock"
+msg() { echo "podman-setup: $*"; }
+die() { echo "podman-setup: ERROR: $*" >&2; exit 1; }
+
+wait_for_socket() {
   for _ in {1..50}; do
-    [[ -S "$socket" ]] && break
+    [[ -S "$socket" ]] && return 0
     sleep 0.1
   done
-  [[ -S "$socket" ]] || { echo "Podman API socket failed to start: $socket" >&2; exit 1; }
-  echo "Podman native API: $socket"
+  die "Podman API socket never appeared: $socket"
+}
+
+# ---------- macOS: podman machine (unchanged) ----------
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  machine="${PODMAN_MACHINE:-podman-machine-default}"
+  podman machine inspect "$machine" >/dev/null 2>&1 || podman machine init "$machine"
+  [[ "$(podman machine inspect --format '{{.State}}' "$machine")" == "running" ]] || podman machine start "$machine"
+  podman machine inspect --format '{{.Name}}: {{.State}}' "$machine"
   exit 0
 fi
 
-machine="${PODMAN_MACHINE:-podman-machine-default}"
-podman machine inspect "$machine" >/dev/null 2>&1 || podman machine init "$machine"
-[[ "$(podman machine inspect --format '{{.State}}' "$machine")" == "running" ]] || podman machine start "$machine"
-podman machine inspect --format '{{.Name}}: {{.State}}' "$machine"
+# ---------- Linux below ----------
+distro="unknown"
+id_like=""
+if [[ -f /etc/os-release ]]; then
+  # shellcheck disable=SC1091
+  . /etc/os-release
+  distro="${ID:-unknown}"
+  id_like="${ID_LIKE:-}"
+fi
+
+retire_brew_service() {
+  # Retire the pre-0020 approach (brew services + long-lived
+  # `podman system service` with no socket activation).
+  if systemctl --user list-unit-files 'homebrew.podman.service' --no-legend 2>/dev/null | grep -q 'homebrew.podman'; then
+    if command -v brew >/dev/null 2>&1; then
+      brew services stop podman >/dev/null 2>&1 || true
+    fi
+    systemctl --user disable --now 'homebrew.podman.service' >/dev/null 2>&1 || true
+  fi
+  rm -f "$HOME/.config/systemd/user/homebrew.podman.service.d/override.conf"
+  rmdir "$HOME/.config/systemd/user/homebrew.podman.service.d" 2>/dev/null || true
+}
+
+# ---------- Arch Linux: pacman provides latest + native units ----------
+if [[ "$distro" == "arch" || "$id_like" == *arch* ]]; then
+  command -v pacman >/dev/null 2>&1 || die "arch-like distro ($distro) but no pacman found"
+  if ! pacman -Q podman >/dev/null 2>&1; then
+    sudo -n pacman -S --needed --noconfirm podman podman-docker \
+      || die "run 'sudo pacman -S podman podman-docker' by hand (no passwordless sudo), then re-run"
+  fi
+  if command -v brew >/dev/null 2>&1 && brew list --formula podman >/dev/null 2>&1; then
+    msg "pacman podman present — removing brew copy so it can't shadow /usr/bin/podman"
+    brew uninstall podman
+  fi
+  retire_brew_service
+  rm -f "$HOME/.config/systemd/user/podman.socket" "$HOME/.config/systemd/user/podman.service"
+  systemctl --user daemon-reload
+  systemctl --user enable --now podman.socket
+  wait_for_socket
+  msg "Podman API (pacman, socket-activated): $socket"
+  exit 0
+fi
+
+# ---------- Other Linux (Ubuntu, ...): brew podman + own socket units ----------
+command -v brew >/dev/null 2>&1 || die "homebrew is required on $distro"
+command -v systemctl >/dev/null 2>&1 || die "systemd user manager not found"
+brew list --formula podman >/dev/null 2>&1 || brew install podman
+brew_prefix="$(brew --prefix)"
+podman_bin="$brew_prefix/bin/podman"
+[[ -x "$podman_bin" ]] || die "podman binary not found at $podman_bin"
+
+unit_dir="$HOME/.config/systemd/user"
+mkdir -p "$unit_dir"
+
+# Upstream unit content (cf. <brew-prefix>/Cellar/podman/*/lib/systemd/user/),
+# with ExecStart pointed at the stable brew symlink so upgrades don't orphan it.
+cat >"$unit_dir/podman.socket" <<'EOF'
+[Unit]
+Description=Podman API Socket
+Documentation=man:podman-system-service(1)
+
+[Socket]
+ListenStream=%t/podman/podman.sock
+SocketMode=0660
+
+[Install]
+WantedBy=sockets.target
+EOF
+cat >"$unit_dir/podman.service" <<EOF
+[Unit]
+Description=Podman API Service
+Requires=podman.socket
+After=podman.socket
+Documentation=man:podman-system-service(1)
+StartLimitIntervalSec=0
+
+[Service]
+Delegate=true
+Type=exec
+KillMode=process
+Environment=LOGGING="--log-level=info"
+# brew's conmon/crun/netavark live outside podman's compiled-in helper paths,
+# so PATH must include the brew prefix (this is what made the old
+# homebrew.podman unit work).
+Environment=PATH=$brew_prefix/bin:$brew_prefix/sbin:/usr/bin:/bin:/usr/sbin:/sbin
+ExecStart=$podman_bin \$LOGGING system service
+
+[Install]
+WantedBy=default.target
+EOF
+
+retire_brew_service
+
+if ! systemctl --user is-active --quiet podman.socket; then
+  rm -f "$socket" # clear any stale pre-socket-activation leftover (never the live socket)
+fi
+systemctl --user daemon-reload
+systemctl --user enable --now podman.socket
+wait_for_socket
+
+if ! loginctl show-user "$USER" 2>/dev/null | grep -q 'Linger=yes'; then
+  msg "WARNING: user linger is off — run 'sudo loginctl enable-linger $USER' so the socket persists across logout/reboot"
+fi
+
+msg "Podman API (brew binary, socket-activated): $socket"

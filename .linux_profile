@@ -8,3 +8,6 @@ fi
 
 # podman rootless socket — docker-API clients (docker CLI, lazydocker) talk to it directly
 export DOCKER_HOST="unix://${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/podman/podman.sock"
+
+# docker CLI compat — a real shim (e.g. Arch podman-docker) wins when installed
+command -v docker >/dev/null 2>&1 || alias docker='podman'
