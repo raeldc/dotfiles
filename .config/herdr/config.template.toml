@@ -30,10 +30,10 @@ focus_pane_right = ["prefix+l", "prefix+right", "alt+l"]
 cycle_pane_next = ["prefix+tab", "prefix+o"]
 split_vertical = ["prefix+v", "prefix+percent"]
 split_horizontal = ["prefix+minus", "prefix+double_quote"]
-resize_mode = ["prefix+r", "ctrl+n"]
+resize_mode = "prefix+r"
 
 # Workspaces
-workspace_picker = ["prefix+w", "ctrl+o"]
+workspace_picker = "prefix+w"
 navigate_workspace_up = ["up", "k"]
 navigate_workspace_down = ["down", "j"]
 switch_workspace = "prefix+shift+1..9"
