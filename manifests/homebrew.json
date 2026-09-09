@@ -80,6 +80,7 @@
       "ruff",
       "rust",
       "shellcheck",
+      "shfmt",
       "snappy",
       "speex",
       "sqlc",
