@@ -43,6 +43,13 @@ return {
     {
         "nvim-treesitter/nvim-treesitter",
         after = "mason.nvim",
+        -- extend (not replace) NvChad's ensure_installed list
+        opts_extend = { "ensure_installed" },
+        opts = {
+            -- parsers are picked up by NvChad's FileType autocmd, which calls
+            -- vim.treesitter.start() natively; gopls adds semantic tokens
+            ensure_installed = { "go", "gomod", "gosum", "gowork" },
+        },
     },
     {
         "mrcjkb/rustaceanvim",
