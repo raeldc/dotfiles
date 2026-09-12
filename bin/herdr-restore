@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Rebuild a Herdr session from a herdr-snapshot file: workspaces, tabs, panes
-# (labels, cwd, splits, zoom, focus) and, by default, relaunch agents fresh.
+# (labels, cwd, splits, zoom, focus) and, by default, relaunch agents resuming
+# their recorded sessions (falls back to fresh when no session was captured).
 #
 # Usage:
 #   bin/herdr-restore [--snapshot FILE] [--workspace LABEL|ID]... [--list]
@@ -12,10 +13,10 @@
 # layout only. Real restores must run inside a Herdr pane (HERDR_ENV=1);
 # --list/--dry-run work anywhere.
 #
-# Limits (by design): agent conversation state is NOT restorable — agents
-# restart fresh and idle. Foreground non-shell commands are reported, not
-# rerun. Restore creates NEW workspaces alongside live ones; close the old
-# ones yourself (herdr workspace close <id>).
+# Limits (by design): resumed agents keep saved session history, but pane
+# scrollback and unsubmitted input are gone. Foreground non-shell commands
+# are reported, not rerun. Restore creates NEW workspaces alongside live
+# ones; close the old ones yourself (herdr workspace close <id>).
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -61,6 +62,7 @@ raw = doc.get('snapshot', doc)
 result = raw.get('result', {})
 snap = result.get('snapshot', result)
 proc_info = doc.get('process_info_by_pane', {})
+agent_sessions = doc.get('agent_sessions', {})
 
 workspaces = sorted(snap.get('workspaces', []), key=lambda w: w.get('number', 0))
 tabs = snap.get('tabs', [])
@@ -257,10 +259,24 @@ def restore_agent(a):
     while name in agent_names:
         agent_counter[0] += 1
         name = f"{re.sub(r'[^a-z0-9_-]', '', kind)}-r{agent_counter[0]}"
-    plan.append(f"agent start {name} --kind {kind} --pane {pane_new} "
-                f"(was: {a.get('terminal_title_stripped')})")
+    sess = agent_sessions.get(a.get('pane_id'), {}) if isinstance(agent_sessions, dict) else {}
+    resume = [str(x) for x in sess.get('resume_argv', [])] if sess.get('session_ref') else []
+    if resume:
+        plan.append(f"agent start {name} --kind {kind} --pane {pane_new} -- {' '.join(resume)} "
+                    f"(resume {sess.get('session_ref')}; was: {a.get('terminal_title_stripped')})")
+    else:
+        plan.append(f"agent start {name} --kind {kind} --pane {pane_new} (fresh; "
+                    f"no session recorded; was: {a.get('terminal_title_stripped')})")
     if args.dry_run:
         return
+    if resume:
+        try:
+            run_herdr('agent', 'start', name, '--kind', kind, '--pane', pane_new,
+                      '--timeout', '60000', '--', *resume)
+            agent_names.add(name)
+            return
+        except Exception as e:
+            warnings.append(f"resume {name} failed ({e}); starting fresh instead")
     try:
         run_herdr('agent', 'start', name, '--kind', kind, '--pane', pane_new,
                   '--timeout', '60000')
@@ -311,8 +327,14 @@ if not args.skip_agents and not args.dry_run:
 elif not args.skip_agents and args.dry_run:
     for a in agents:
         if any(a.get('workspace_id') == w.get('workspace_id') for w in workspaces):
-            plan.append(f"agent start <name> --kind {a.get('agent')} "
-                        f"(was: {a.get('terminal_title_stripped')})")
+            sess = agent_sessions.get(a.get('pane_id'), {}) if isinstance(agent_sessions, dict) else {}
+            if sess.get('session_ref'):
+                plan.append(f"agent start <name> --kind {a.get('agent')} -- "
+                            f"{' '.join(str(x) for x in sess.get('resume_argv', []))} "
+                            f"(resume {sess.get('session_ref')})")
+            else:
+                plan.append(f"agent start <name> --kind {a.get('agent')} (fresh; "
+                            f"was: {a.get('terminal_title_stripped')})")
 
 if args.dry_run:
     print('\n'.join(plan) or '(empty plan)')
@@ -339,7 +361,7 @@ for p in panes:
         cmd = foreground_report(p.get('pane_id'))
         if cmd:
             print(f"  {p.get('pane_id')} was running: {cmd}")
-print('  agent conversations (agents restart fresh and idle; re-prompt from the titles above)')
+print('  agent scrollback and unsubmitted input (resumed agents keep their saved session history)')
 if warnings:
     print()
     print('Warnings:')
@@ -347,6 +369,8 @@ if warnings:
         print(f"  - {x}")
 if not args.dry_run:
     print()
-    print('New workspaces were created alongside live ones; close the old ones yourself:')
+    print('Close the old workspace(s) BEFORE restoring if they are still live:')
     print('  herdr workspace close <old-id>')
+    print('Restoring alongside a live original parks the resumed agent at a')
+    print('takeover prompt instead of resuming (same session, two holders).')
 PY

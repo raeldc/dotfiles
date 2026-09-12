@@ -52,9 +52,11 @@ pane (`HERDR_ENV=1`).
 `bin/herdr-restore --workspace <label|id>` for one workspace (`--list` previews,
 `--dry-run` plans, `--skip-agents` restores layout only). It recreates workspaces,
 tabs, and panes with labels, cwd, splits, zoom, and focus, and relaunches agents
-fresh — conversation state and foreground commands are not restorable and are
-reported instead. Restore creates new workspaces alongside live ones; close the
-old ones yourself.
+resuming their snapshot-recorded sessions (`bin/herdr-snapshot` captures
+opencode/claude/pi/omp session refs; unmapped agents restart fresh, and resume
+falls back to fresh on failure). Foreground commands are not restorable and are
+reported instead. Close the old workspace(s) before restoring — restoring
+alongside a live original parks the resumed agent at a takeover prompt.
 
 ## Platform Split (mac / linux / global)
 These dotfiles run on both macOS and Linux machines. Platform-dependent config must land in the right bucket:

@@ -25,8 +25,195 @@ herdr api snapshot > "$raw"
 python3 - "$raw" "$out_dir/herdr-state-$stamp.json" "$out_dir/latest.json" "$herdr_version" <<'PY'
 import datetime
 import json
+import os
+import re
 import subprocess
 import sys
+
+HOME = os.path.expanduser('~')
+
+
+def read_json_prefix(path, max_lines=5, max_bytes=65536):
+    """Read leading JSON objects (one per line) from a jsonl session file."""
+    objs = []
+    try:
+        with open(path, encoding='utf-8', errors='replace') as f:
+            for _ in range(max_lines):
+                line = f.readline(max_bytes // max_lines)
+                if not line:
+                    break
+                line = line.strip()
+                if not line.startswith('{'):
+                    continue
+                try:
+                    objs.append(json.loads(line))
+                except Exception:
+                    continue
+    except OSError:
+        pass
+    return objs
+
+
+def header_cwd_and_id(path):
+    for o in read_json_prefix(path):
+        if o.get('type') == 'session' and o.get('cwd'):
+            return o.get('cwd'), o.get('id')
+    return None, None
+
+
+def jsonl_candidates_for_cwd(cwd, store, slug=None):
+    """Ranked [(ref, argv, recency)] session files whose header cwd matches."""
+    cands = []
+
+    def consider(path):
+        try:
+            mtime = os.path.getmtime(path)
+        except OSError:
+            return
+        c, _ = header_cwd_and_id(path)
+        if c == cwd:
+            cands.append((path, mtime))
+
+    if slug:
+        d = os.path.join(store, slug)
+        try:
+            for e in os.listdir(d):
+                if e.endswith('.jsonl'):
+                    consider(os.path.join(d, e))
+        except OSError:
+            pass
+    else:
+        try:
+            dirs = sorted(os.listdir(store))
+        except OSError:
+            dirs = []
+        for dd in dirs[:500]:
+            d = os.path.join(store, dd)
+            if not os.path.isdir(d):
+                continue
+            try:
+                files = [os.path.join(d, e) for e in os.listdir(d) if e.endswith('.jsonl')]
+            except OSError:
+                continue
+            for p in files:
+                consider(p)
+    cands.sort(key=lambda t: t[1], reverse=True)
+    return cands
+
+
+def pi_slug(cwd):
+    return '-' + cwd.replace('/', '-') + '--'
+
+
+def normalize_title(t):
+    t = (t or '').strip()
+    t = re.sub(r'^(OC\s*\|\s*|✳\s*|π\s*[-–>]?\s*|\S+\s+>\s+)', '', t)
+    t = re.sub(r'\.{3,}$', '', t).strip().lower()
+    return t
+
+
+def opencode_session_rows():
+    try:
+        out = subprocess.run(['opencode', 'session', 'list', '--format', 'json', '-n', '200'],
+                             capture_output=True, text=True, timeout=60, check=True)
+        items = json.loads(out.stdout)
+        return [s for s in items if isinstance(s, dict) and s.get('id')]
+    except Exception:
+        return []
+
+
+def claude_sessions_by_project():
+    """project -> [(sessionId, max_ts)] newest first, from Claude's history log."""
+    hist = os.path.join(HOME, '.claude', 'history.jsonl')
+    try:
+        size = os.path.getsize(hist)
+    except OSError:
+        return {}
+    best = {}
+    try:
+        with open(hist, encoding='utf-8', errors='replace') as f:
+            f.seek(max(size - 1048576, 0))  # last 1MB is plenty
+            f.readline()  # drop partial line
+            for line in f:
+                try:
+                    o = json.loads(line)
+                except Exception:
+                    continue
+                p, sid = o.get('project'), o.get('sessionId')
+                if not p or not sid:
+                    continue
+                try:
+                    ts = int(o.get('timestamp', 0))
+                except Exception:
+                    ts = 0
+                cur = best.setdefault(p, {})
+                if ts >= cur.get(sid, -1):
+                    cur[sid] = ts
+    except OSError:
+        return {}
+    return {p: sorted(sids.items(), key=lambda kv: kv[1], reverse=True)
+            for p, sids in best.items()}
+
+
+def candidates_for(kind, cwd, title, oc_rows, claude_map):
+    """Ranked [(ref, resume_argv, match_kind)] for one agent pane."""
+    if kind == 'pi':
+        return [(p, ['--session', p], 'file') for p, _ in
+                jsonl_candidates_for_cwd(cwd, os.path.join(HOME, '.pi/agent/sessions'), pi_slug(cwd))]
+    if kind == 'omp':
+        return [(p, ['-r', p], 'file') for p, _ in
+                jsonl_candidates_for_cwd(cwd, os.path.join(HOME, '.omp/agent/sessions'))]
+    if kind == 'opencode':
+        rows = [s for s in oc_rows if s.get('directory') == cwd]
+        rows.sort(key=lambda s: s.get('updated', 0), reverse=True)
+        return [(s['id'], ['-s', s['id']], 'session') for s in rows]
+    if kind == 'claude':
+        return [(sid, ['--resume', sid], 'history') for sid, _ in claude_map.get(cwd, [])]
+    return []
+
+
+def resolve_agent_sessions(agents):
+    """Best-effort pane -> agent-session mapping for resume on restore.
+
+    Panes sharing (kind, cwd) split the ranked candidates by recency so two
+    panes never resume the same session; leftovers restart fresh.
+    """
+    out = {}
+    oc_rows = opencode_session_rows()
+    claude_map = claude_sessions_by_project()
+    groups = {}
+    for a in agents:
+        if a.get('pane_id') and a.get('agent'):
+            groups.setdefault((a.get('agent'), a.get('cwd')), []).append(a)
+    for (kind, cwd), group in groups.items():
+        group.sort(key=lambda a: (a.get('state_change_seq') or 0, a.get('revision') or 0),
+                   reverse=True)
+        pool = candidates_for(kind, cwd, None, oc_rows, claude_map)
+        pool = [list(c) for c in pool]
+        for a in group:
+            pane_id = a.get('pane_id')
+            entry = {'kind': kind, 'cwd': cwd, 'title': a.get('terminal_title_stripped'),
+                     'session_ref': None, 'resume_argv': [], 'confidence': None}
+            try:
+                # title match first (opencode titles survive verbatim)
+                nt = normalize_title(a.get('terminal_title_stripped'))
+                hit = None
+                if kind == 'opencode' and nt:
+                    for i, (ref, argv, how) in enumerate(pool):
+                        row = next((s for s in oc_rows if s.get('id') == ref), {})
+                        st = normalize_title(row.get('title'))
+                        if st and (st in nt or nt in st):
+                            hit = i
+                            break
+                if hit is None and pool:
+                    hit = 0
+                if hit is not None:
+                    ref, argv, how = pool.pop(hit)
+                    entry.update(session_ref=ref, resume_argv=argv, confidence=f'cwd+{how}')
+            except Exception as e:
+                entry['error'] = str(e)
+            out[pane_id] = entry
+    return out
 
 raw_path, stamped_path, latest_path, herdr_version = sys.argv[1:5]
 
@@ -56,6 +243,7 @@ doc = {
     'herdr_version': herdr_version,
     'snapshot': snapshot_doc,
     'process_info_by_pane': processes,
+    'agent_sessions': resolve_agent_sessions(snap.get('agents', [])),
 }
 
 for path in (stamped_path, latest_path):
@@ -65,6 +253,7 @@ for path in (stamped_path, latest_path):
 
 ws = snap.get('workspaces', [])
 tabs = snap.get('tabs', [])
+nsess = sum(1 for v in doc['agent_sessions'].values() if v.get('session_ref'))
 print(f'herdr-snapshot: {len(ws)} workspaces, {len(tabs)} tabs, '
-      f'{len(panes)} panes -> {stamped_path}')
+      f'{len(panes)} panes, {nsess} agent sessions -> {stamped_path}')
 PY
