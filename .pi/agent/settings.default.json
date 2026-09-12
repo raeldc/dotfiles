@@ -1,0 +1,18 @@
+// .pi/agent/settings.default.json — stable pi defaults template (JSONC, not read by pi).
+// Copy the keys you want into settings.json. Volatile app-managed keys
+// (versions, caches) stay commented out so they never churn the repo.
+{
+  // App-managed — pi rewrites this on every upgrade. Leave it out.
+  // "lastChangelogVersion": "0.85.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-sol",
+  "defaultThinkingLevel": "high",
+  "packages": [
+    "npm:pi-teams",
+    "npm:@plannotator/pi-extension",
+    "npm:@ff-labs/pi-fff",
+    "npm:@qraxiss/pi-gemini-auth"
+  ],
+  "theme": "dark",
+  "hideThinkingBlock": true
+}
