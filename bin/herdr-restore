@@ -41,6 +41,7 @@ import os
 import re
 import subprocess
 import sys
+import time
 
 repo_dir = sys.argv[1]
 argv = sys.argv[2:]
@@ -242,6 +243,26 @@ def infer_split(group):
     return 'right', 0.5
 
 
+def start_with_retry(name, kind, pane_new, extra_argv, attempts=4):
+    """agent start, retrying while the fresh pane's shell is still coming up."""
+    last = None
+    cmd = ['agent', 'start', name, '--kind', kind, '--pane', pane_new,
+           '--timeout', '60000']
+    if extra_argv:
+        cmd += ['--', *extra_argv]
+    for i in range(attempts):
+        try:
+            run_herdr(*cmd)
+            return True, None
+        except Exception as e:
+            last = e
+            if 'agent_pane_busy' in str(e) and i < attempts - 1:
+                time.sleep(5)
+                continue
+            return False, e
+    return False, last
+
+
 agent_names = live_agent_names()
 agent_counter = [0]
 
@@ -273,19 +294,16 @@ def restore_agent(a):
     if args.dry_run:
         return
     if resume:
-        try:
-            run_herdr('agent', 'start', name, '--kind', kind, '--pane', pane_new,
-                      '--timeout', '60000', '--', *resume)
+        ok, err = start_with_retry(name, kind, pane_new, resume)
+        if ok:
             agent_names.add(name)
             return
-        except Exception as e:
-            warnings.append(f"resume {name} failed ({e}); starting fresh instead")
-    try:
-        run_herdr('agent', 'start', name, '--kind', kind, '--pane', pane_new,
-                  '--timeout', '60000')
+        warnings.append(f"resume {name} failed ({err}); starting fresh instead")
+    ok, err = start_with_retry(name, kind, pane_new, [])
+    if ok:
         agent_names.add(name)
-    except Exception as e:
-        warnings.append(f"agent start {name} ({kind}) failed: {e}")
+    else:
+        warnings.append(f"agent start {name} ({kind}) failed: {err}")
 
 
 def foreground_report(old_pane_id):
