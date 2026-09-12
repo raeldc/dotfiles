@@ -19,6 +19,7 @@ Dotfiles mirror `$HOME` via symlinks. Root shell entrypoints live at the repo ro
 - Helper scripts: `bin/` (single-purpose scripts, kebab-case)
 - Activities: `activities/` (global activity manifest — see Activity System)
 - Herdr state: `.local/herdr/` (gitignored, never stowed — see Herdr State)
+- Skills: `.agents/skills/` (canonical store — see Skills)
 
 ## Config Quick Map
 Use this to jump straight to the right file for common instructions.
@@ -214,3 +215,12 @@ Run the checks that match your changes:
 Conventional Commits with scopes, e.g. `chore(shell): update zshrc`. Keep subjects imperative and <70 chars.
 
 When committing multiple changes, group them logically into separate commits by theme rather than lumping unrelated changes together.
+
+## Skills
+Author each skill once in `.agents/skills/<name>/SKILL.md` (kebab-case dir, `name` +
+`description` frontmatter — the description is the load trigger, so include the
+operator's invocation words), then symlink it into the other SKILL.md agents:
+`.agent/skills/<name>` and `.claude/skills/<name>`, as relative symlinks
+(e.g. `../../.agents/skills/<name>`). Pi extensions (`.pi/agent/extensions/`) are a
+different format — never symlink there. `skills-lock.json` pins externally-sourced
+skills only; locally-authored skills stay out of it.
