@@ -1,0 +1,352 @@
+#!/usr/bin/env bash
+# Rebuild a Herdr session from a herdr-snapshot file: workspaces, tabs, panes
+# (labels, cwd, splits, zoom, focus) and, by default, relaunch agents fresh.
+#
+# Usage:
+#   bin/herdr-restore [--snapshot FILE] [--workspace LABEL|ID]... [--list]
+#                     [--dry-run] [--skip-agents] [--no-refocus]
+#
+# --list previews the workspaces in the snapshot. --workspace restores only
+# matching workspaces (repeatable, matches snapshot label or workspace_id).
+# --dry-run prints the plan without touching Herdr. --skip-agents restores
+# layout only. Real restores must run inside a Herdr pane (HERDR_ENV=1);
+# --list/--dry-run work anywhere.
+#
+# Limits (by design): agent conversation state is NOT restorable — agents
+# restart fresh and idle. Foreground non-shell commands are reported, not
+# rerun. Restore creates NEW workspaces alongside live ones; close the old
+# ones yourself (herdr workspace close <id>).
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+need_herdr=1
+for arg in "$@"; do
+  case "$arg" in
+    --list|--dry-run) need_herdr=0 ;;
+  esac
+done
+
+if [ "$need_herdr" = 1 ]; then
+  command -v herdr >/dev/null 2>&1 || { echo "herdr-restore: herdr not on PATH" >&2; exit 1; }
+  [ "${HERDR_ENV:-}" = 1 ] || { echo "herdr-restore: not inside Herdr (HERDR_ENV!=1)" >&2; exit 1; }
+fi
+
+python3 - "$repo_dir" "$@" <<'PY'
+import argparse
+import json
+import os
+import re
+import subprocess
+import sys
+
+repo_dir = sys.argv[1]
+argv = sys.argv[2:]
+
+ap = argparse.ArgumentParser(prog='bin/herdr-restore')
+ap.add_argument('--snapshot', default=os.path.join(repo_dir, '.local/herdr/latest.json'))
+ap.add_argument('--workspace', action='append', default=[], metavar='LABEL|ID')
+ap.add_argument('--list', action='store_true')
+ap.add_argument('--dry-run', action='store_true')
+ap.add_argument('--skip-agents', action='store_true')
+ap.add_argument('--no-refocus', action='store_true')
+args = ap.parse_args(argv)
+
+if not os.path.isfile(args.snapshot):
+    sys.exit(f"herdr-restore: snapshot not found: {args.snapshot}\nRun bin/herdr-snapshot first.")
+
+with open(args.snapshot, encoding='utf-8') as f:
+    doc = json.load(f)
+raw = doc.get('snapshot', doc)
+result = raw.get('result', {})
+snap = result.get('snapshot', result)
+proc_info = doc.get('process_info_by_pane', {})
+
+workspaces = sorted(snap.get('workspaces', []), key=lambda w: w.get('number', 0))
+tabs = snap.get('tabs', [])
+panes = snap.get('panes', [])
+agents = snap.get('agents', [])
+layouts = {(l.get('workspace_id'), l.get('tab_id')): l for l in snap.get('layouts', [])}
+
+tabs_by_ws = {}
+for t in sorted(tabs, key=lambda t: t.get('number', 0)):
+    tabs_by_ws.setdefault(t.get('workspace_id'), []).append(t)
+panes_by_tab = {}
+for p in panes:
+    panes_by_tab.setdefault(p.get('tab_id'), []).append(p)
+
+if args.workspace:
+    wanted = set(args.workspace)
+    workspaces = [w for w in workspaces
+                  if w.get('label') in wanted or w.get('workspace_id') in wanted]
+    if not workspaces:
+        sys.exit(f"herdr-restore: no workspace matches {sorted(wanted)}")
+
+if args.list:
+    for w in workspaces:
+        wtabs = tabs_by_ws.get(w.get('workspace_id'), [])
+        npanes = sum(len(panes_by_tab.get(t.get('tab_id'), [])) for t in wtabs)
+        nagents = sum(1 for a in agents if a.get('workspace_id') == w.get('workspace_id'))
+        print(f"{w.get('label')} [{w.get('workspace_id')}] "
+              f"{len(wtabs)} tabs, {npanes} panes, {nagents} agents")
+    sys.exit(0)
+
+SHELLS = {'sh', 'bash', 'dash', 'zsh', 'fish', 'ksh', 'tcsh', '-zsh', '-bash', 'nu'}
+
+plan = []  # human-readable dry-run lines
+warnings = []
+idmap = {}  # old pane/tab/ws id -> new id
+
+
+def run_herdr(*argv):
+    out = subprocess.run(['herdr', *argv], capture_output=True, text=True, timeout=120)
+    if out.returncode != 0:
+        raise RuntimeError(f"herdr {' '.join(argv)} failed: {out.stderr.strip() or out.stdout.strip()}")
+    return json.loads(out.stdout)['result']
+
+
+def live_agent_names():
+    try:
+        items = run_herdr('agent', 'list').get('agents', [])
+        return {a.get('agent') for a in items if a.get('agent')}
+    except Exception:
+        return set()
+
+
+def good_cwd(path, fallback=os.path.expanduser('~')):
+    if path and os.path.isdir(path):
+        return path
+    warnings.append(f"cwd gone, using $HOME instead: {path}")
+    return fallback
+
+
+def rect_of(p):
+    for l in layouts.values():
+        for lp in l.get('panes', []):
+            if lp.get('pane_id') == p.get('pane_id'):
+                return lp.get('rect', {})
+    return {}
+
+
+def restore_tab(ws_new, tab, first_tab):
+    """Create (or reuse root) tab and rebuild its panes. Returns new tab id."""
+    tpanes = panes_by_tab.get(tab.get('tab_id'), [])
+    layout = layouts.get((tab.get('workspace_id'), tab.get('tab_id')), {})
+    splits = layout.get('splits', []) if layout else []
+    focused_old = (layout or {}).get('focused_pane_id')
+
+    if first_tab:
+        tab_new = idmap['_root_tab']
+        if tab.get('label'):
+            action = ('tab rename', tab_new, tab['label'])
+            plan.append(f"tab rename {tab_new} -> {tab['label']!r}")
+            if not args.dry_run:
+                run_herdr('tab', 'rename', tab_new, tab['label'])
+        root_new = idmap['_root_pane']
+    else:
+        first_cwd = good_cwd((spatial_first(tpanes) or {}).get('foreground_cwd')
+                             or (spatial_first(tpanes) or {}).get('cwd'))
+        plan.append(f"tab create label={tab.get('label')!r} cwd={first_cwd}")
+        if args.dry_run:
+            tab_new, root_new = f"<new-tab-{tab.get('tab_id')}>", '<new-root-pane>'
+        else:
+            res = run_herdr('tab', 'create', '--workspace', ws_new,
+                            '--label', tab.get('label') or tab.get('tab_id'),
+                            '--cwd', first_cwd, '--no-focus')
+            tab_new, root_new = res['tab']['tab_id'], res['root_pane']['pane_id']
+
+    idmap[tab.get('tab_id')] = tab_new
+    if first_tab:
+        # root pane was created with the workspace; fix its cwd mapping below
+        pass
+
+    ordered = spatial_order(tpanes)
+    if ordered:
+        idmap[ordered[0].get('pane_id')] = root_new
+        build_splits(root_new, ordered, splits, focused_old)
+    if layout.get('zoomed') and ordered:
+        target = idmap.get(focused_old, root_new)
+        plan.append(f"pane zoom --on {target}")
+        if not args.dry_run:
+            try:
+                run_herdr('pane', 'zoom', target, '--on')
+            except Exception as e:
+                warnings.append(f"zoom failed on {target}: {e}")
+    return tab_new
+
+
+def spatial_first(tpanes):
+    o = spatial_order(tpanes)
+    return o[0] if o else None
+
+
+def spatial_order(tpanes):
+    """Order panes top-left first using layout rects; fall back to given order."""
+    def key(p):
+        r = rect_of(p)
+        return (r.get('y', 0), r.get('x', 0)) if r else (0, 0)
+    has_rects = any(rect_of(p) for p in tpanes)
+    return sorted(tpanes, key=key) if has_rects else list(tpanes)
+
+
+def build_splits(pane_new, group, splits, focused_old):
+    """Recursively split pane_new to host the recorded pane group."""
+    if len(group) <= 1:
+        return
+    if len(group) == 2 and splits:
+        sp = splits[0]
+        direction, ratio = sp.get('direction', 'right'), sp.get('ratio', 0.5)
+    else:
+        if len(group) > 2:
+            warnings.append(f"tab has {len(group)} panes; geometry beyond one split is approximate")
+        direction, ratio = infer_split(group)
+    first, second = group[0], group[1]
+    rest = group[2:]
+    new_cwd = good_cwd(second.get('foreground_cwd') or second.get('cwd'))
+    focus_new = (second.get('pane_id') == focused_old)
+    plan.append(f"pane split {pane_new} --direction {direction} --ratio {ratio} "
+                f"cwd={new_cwd}" + (" --focus" if focus_new else ""))
+    if args.dry_run:
+        second_new = f"<new-pane-{second.get('pane_id')}>"
+    else:
+        cmd = ['pane', 'split', '--pane', pane_new, '--direction', direction,
+               '--ratio', str(ratio), '--cwd', new_cwd,
+               '--focus' if focus_new else '--no-focus']
+        second_new = run_herdr(*cmd)['pane']['pane_id']
+    idmap[second.get('pane_id')] = second_new
+    if rest:
+        # stack leftovers off the newest pane (best effort)
+        build_splits(second_new, [second] + rest, [], focused_old)
+    # recurse into halves only when cleanly separable; else leftovers handled above
+    if not rest and len(group) == 2:
+        return
+
+
+def infer_split(group):
+    """Pick a split direction/ratio from pane rects (best effort)."""
+    rs = [rect_of(p) for p in group]
+    if all(rs) and len(rs) >= 2:
+        xs = sorted({r.get('x', 0) for r in rs})
+        ys = sorted({r.get('y', 0) for r in rs})
+        if len(xs) > 1:
+            widths = [r.get('width', 1) for r in rs[:2]]
+            return 'right', round(widths[0] / max(sum(widths), 1), 2) or 0.5
+        if len(ys) > 1:
+            heights = [r.get('height', 1) for r in rs[:2]]
+            return 'down', round(heights[0] / max(sum(heights), 1), 2) or 0.5
+    return 'right', 0.5
+
+
+agent_names = live_agent_names()
+agent_counter = [0]
+
+
+def restore_agent(a):
+    kind = a.get('agent')
+    if kind not in {'pi', 'claude', 'codex', 'gemini', 'cursor', 'devin', 'agy',
+                    'cline', 'omp', 'mastracode', 'opencode', 'copilot', 'kimi',
+                    'kiro', 'droid', 'amp', 'grok', 'hermes', 'kilo', 'qodercli', 'qwen', 'maki'}:
+        warnings.append(f"unknown agent kind {kind!r}; not relaunched (was: {a.get('terminal_title_stripped')})")
+        return
+    pane_new = idmap.get(a.get('pane_id'))
+    if not pane_new or (isinstance(pane_new, str) and pane_new.startswith('<')):
+        warnings.append(f"no rebuilt pane for agent {kind}; not relaunched")
+        return
+    agent_counter[0] += 1
+    name = f"{re.sub(r'[^a-z0-9_-]', '', kind)}-r{agent_counter[0]}"
+    while name in agent_names:
+        agent_counter[0] += 1
+        name = f"{re.sub(r'[^a-z0-9_-]', '', kind)}-r{agent_counter[0]}"
+    plan.append(f"agent start {name} --kind {kind} --pane {pane_new} "
+                f"(was: {a.get('terminal_title_stripped')})")
+    if args.dry_run:
+        return
+    try:
+        run_herdr('agent', 'start', name, '--kind', kind, '--pane', pane_new,
+                  '--timeout', '60000')
+        agent_names.add(name)
+    except Exception as e:
+        warnings.append(f"agent start {name} ({kind}) failed: {e}")
+
+
+def foreground_report(old_pane_id):
+    info = proc_info.get(old_pane_id, {})
+    for fp in info.get('foreground_processes', []):
+        name = (fp.get('name') or '').lstrip('-')
+        if name not in SHELLS and fp.get('pid') != info.get('shell_pid'):
+            cmdline = fp.get('cmdline') or fp.get('name') or f"pid {fp.get('pid')}"
+            return f"{cmdline} (cwd {fp.get('cwd')})"
+    return None
+
+
+new_ws_ids, new_tab_ids = [], []
+for w in workspaces:
+    wtabs = tabs_by_ws.get(w.get('workspace_id'), [])
+    if not wtabs:
+        warnings.append(f"workspace {w.get('label')} has no tabs; skipped")
+        continue
+    first = wtabs[0]
+    first_panes = spatial_order(panes_by_tab.get(first.get('tab_id'), []))
+    ws_cwd = good_cwd((first_panes[0].get('foreground_cwd') if first_panes else None)
+                      or (first_panes[0].get('cwd') if first_panes else None)
+                      or os.path.expanduser('~'))
+    plan.append(f"workspace create label={w.get('label')!r} cwd={ws_cwd}")
+    if args.dry_run:
+        ws_new = f"<new-ws-{w.get('workspace_id')}>"
+        idmap['_root_tab'], idmap['_root_pane'] = '<new-root-tab>', '<new-root-pane>'
+    else:
+        res = run_herdr('workspace', 'create', '--label', w.get('label') or w.get('workspace_id'),
+                        '--cwd', ws_cwd, '--no-focus')
+        ws_new = res['workspace']['workspace_id']
+        idmap['_root_tab'], idmap['_root_pane'] = res['tab']['tab_id'], res['root_pane']['pane_id']
+    idmap[w.get('workspace_id')] = ws_new
+    new_ws_ids.append(ws_new)
+    for i, t in enumerate(wtabs):
+        new_tab_ids.append(restore_tab(ws_new, t, first_tab=(i == 0)))
+
+if not args.skip_agents and not args.dry_run:
+    for a in agents:
+        if any(a.get('workspace_id') == w.get('workspace_id') for w in workspaces):
+            restore_agent(a)
+elif not args.skip_agents and args.dry_run:
+    for a in agents:
+        if any(a.get('workspace_id') == w.get('workspace_id') for w in workspaces):
+            plan.append(f"agent start <name> --kind {a.get('agent')} "
+                        f"(was: {a.get('terminal_title_stripped')})")
+
+if args.dry_run:
+    print('\n'.join(plan) or '(empty plan)')
+else:
+    if not args.no_refocus:
+        try:
+            foc = snap.get('focused_workspace_id')
+            if foc and foc in idmap and idmap[foc] in new_ws_ids:
+                run_herdr('workspace', 'focus', idmap[foc])
+            ftab = snap.get('focused_tab_id')
+            if ftab and ftab in idmap and idmap[ftab] in new_tab_ids:
+                run_herdr('tab', 'focus', idmap[ftab])
+        except Exception as e:
+            warnings.append(f"refocus failed: {e}")
+    print(f"restored {len(new_ws_ids)} workspace(s), {len(new_tab_ids)} tab(s)")
+    for old, new in sorted(idmap.items()):
+        if not old.startswith('_') and not old.startswith('<'):
+            print(f"  {old} -> {new}")
+
+print()
+print('Not restored (by design):')
+for p in panes:
+    if any(p.get('workspace_id') == w.get('workspace_id') for w in workspaces):
+        cmd = foreground_report(p.get('pane_id'))
+        if cmd:
+            print(f"  {p.get('pane_id')} was running: {cmd}")
+print('  agent conversations (agents restart fresh and idle; re-prompt from the titles above)')
+if warnings:
+    print()
+    print('Warnings:')
+    for x in warnings:
+        print(f"  - {x}")
+if not args.dry_run:
+    print()
+    print('New workspaces were created alongside live ones; close the old ones yourself:')
+    print('  herdr workspace close <old-id>')
+PY

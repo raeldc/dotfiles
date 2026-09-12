@@ -48,6 +48,13 @@ Use this to jump straight to the right file for common instructions.
 `.local/herdr/herdr-state-<UTC>.json` (and refreshes `latest.json`). That directory is
 gitignored and never stowed — machine-local state, not config. Must run inside a Herdr
 pane (`HERDR_ENV=1`).
+"Restore herdr state" means run `bin/herdr-restore` (full session) or
+`bin/herdr-restore --workspace <label|id>` for one workspace (`--list` previews,
+`--dry-run` plans, `--skip-agents` restores layout only). It recreates workspaces,
+tabs, and panes with labels, cwd, splits, zoom, and focus, and relaunches agents
+fresh — conversation state and foreground commands are not restorable and are
+reported instead. Restore creates new workspaces alongside live ones; close the
+old ones yourself.
 
 ## Platform Split (mac / linux / global)
 These dotfiles run on both macOS and Linux machines. Platform-dependent config must land in the right bucket:
