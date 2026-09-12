@@ -53,9 +53,9 @@ pane (`HERDR_ENV=1`).
 `--dry-run` plans, `--skip-agents` restores layout only). It recreates workspaces,
 tabs, and panes with labels, cwd, splits, zoom, and focus, and relaunches agents
 resuming their snapshot-recorded sessions (`bin/herdr-snapshot` captures
-opencode/pi/omp session refs; claude transcripts aren't persisted on this
-machine so claude restarts fresh; unmapped agents restart fresh, and resume
-falls back to fresh on failure). Foreground commands are not restorable and are
+opencode/pi/omp refs and Claude's exact BFFS account + session ref from its
+live PID metadata; unmapped agents restart fresh, and resume falls back to
+fresh on failure). Foreground commands are not restorable and are
 reported instead. Restore refuses workspaces whose label is still live
 (`--force` overrides); close the old workspace(s) first — restoring
 alongside a live original parks the resumed agent at a takeover prompt.
