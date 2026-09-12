@@ -9,7 +9,6 @@ lock.mdb
 .pi/*
 !.pi/agent
 .pi/agent/*
-!.pi/agent/settings.json
 !.pi/agent/settings.default.json
 !.pi/agent/keybindings.json
 !.pi/agent/extensions
