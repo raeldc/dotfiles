@@ -11,6 +11,7 @@
 \.mise\.toml
 \.tool-versions
 opencode\.json
+\.local
 
 .*\.md
 activities

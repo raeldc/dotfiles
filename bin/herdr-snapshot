@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+# Save the current Herdr session state: workspaces, tabs, and panes (with
+# names, cwd, agent status) plus the foreground process inside each pane.
+# "Save herdr state" means run this script.
+#
+# Output: .local/herdr/herdr-state-<UTC timestamp>.json + .local/herdr/latest.json
+# (gitignored and never stowed — machine-local state, not config).
+# Must run inside a Herdr pane (HERDR_ENV=1).
+set -euo pipefail
+
+repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+out_dir="$repo_dir/.local/herdr"
+
+command -v herdr >/dev/null 2>&1 || { echo "herdr-snapshot: herdr not on PATH" >&2; exit 1; }
+[ "${HERDR_ENV:-}" = 1 ] || { echo "herdr-snapshot: not inside Herdr (HERDR_ENV!=1)" >&2; exit 1; }
+
+mkdir -p "$out_dir"
+stamp="$(date -u +%Y%m%d-%H%M%S)"
+raw="$(mktemp)"
+trap 'rm -f "$raw"' EXIT
+
+herdr api snapshot > "$raw"
+
+python3 - "$raw" "$out_dir/herdr-state-$stamp.json" "$out_dir/latest.json" <<'PY'
+import datetime
+import json
+import subprocess
+import sys
+
+raw_path, stamped_path, latest_path = sys.argv[1:4]
+
+with open(raw_path, encoding='utf-8') as f:
+    snapshot_doc = json.load(f)
+
+result = snapshot_doc.get('result', {})
+snap = result.get('snapshot', result)
+panes = snap.get('panes', [])
+
+processes = {}
+for pane in panes:
+    pane_id = pane.get('pane_id')
+    if not pane_id:
+        continue
+    try:
+        out = subprocess.run(
+            ['herdr', 'pane', 'process-info', '--pane', pane_id],
+            capture_output=True, text=True, timeout=30, check=True,
+        )
+        processes[pane_id] = json.loads(out.stdout)['result']['process_info']
+    except Exception as e:  # keep the snapshot even if one pane is unreadable
+        processes[pane_id] = {'pane_id': pane_id, 'error': str(e)}
+
+doc = {
+    'taken_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'snapshot': snapshot_doc,
+    'process_info_by_pane': processes,
+}
+
+for path in (stamped_path, latest_path):
+    with open(path, 'w', encoding='utf-8') as f:
+        json.dump(doc, f, indent=2)
+        f.write('\n')
+
+ws = snap.get('workspaces', [])
+tabs = snap.get('tabs', [])
+print(f'herdr-snapshot: {len(ws)} workspaces, {len(tabs)} tabs, '
+      f'{len(panes)} panes -> {stamped_path}')
+PY
