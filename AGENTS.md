@@ -55,7 +55,8 @@ tabs, and panes with labels, cwd, splits, zoom, and focus, and relaunches agents
 resuming their snapshot-recorded sessions (`bin/herdr-snapshot` captures
 opencode/claude/pi/omp session refs; unmapped agents restart fresh, and resume
 falls back to fresh on failure). Foreground commands are not restorable and are
-reported instead. Close the old workspace(s) before restoring — restoring
+reported instead. Restore refuses workspaces whose label is still live
+(`--force` overrides); close the old workspace(s) first — restoring
 alongside a live original parks the resumed agent at a takeover prompt.
 
 ## Platform Split (mac / linux / global)

@@ -5,18 +5,19 @@
 #
 # Usage:
 #   bin/herdr-restore [--snapshot FILE] [--workspace LABEL|ID]... [--list]
-#                     [--dry-run] [--skip-agents] [--no-refocus]
+#                     [--dry-run] [--skip-agents] [--no-refocus] [--force]
 #
 # --list previews the workspaces in the snapshot. --workspace restores only
 # matching workspaces (repeatable, matches snapshot label or workspace_id).
 # --dry-run prints the plan without touching Herdr. --skip-agents restores
-# layout only. Real restores must run inside a Herdr pane (HERDR_ENV=1);
+# layout only. Restoring a workspace whose label is still live is refused
+# (agents would park at takeover prompts); close it first or pass --force.
+# Real restores must run inside a Herdr pane (HERDR_ENV=1);
 # --list/--dry-run work anywhere.
 #
 # Limits (by design): resumed agents keep saved session history, but pane
 # scrollback and unsubmitted input are gone. Foreground non-shell commands
-# are reported, not rerun. Restore creates NEW workspaces alongside live
-# ones; close the old ones yourself (herdr workspace close <id>).
+# are reported, not rerun.
 set -euo pipefail
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -51,6 +52,8 @@ ap.add_argument('--list', action='store_true')
 ap.add_argument('--dry-run', action='store_true')
 ap.add_argument('--skip-agents', action='store_true')
 ap.add_argument('--no-refocus', action='store_true')
+ap.add_argument('--force', action='store_true',
+                help='restore even when a live workspace has the same label')
 args = ap.parse_args(argv)
 
 if not os.path.isfile(args.snapshot):
@@ -295,6 +298,39 @@ def foreground_report(old_pane_id):
     return None
 
 
+def live_workspace_labels():
+    """Labels of currently live workspaces, or None when unreachable."""
+    try:
+        res = run_herdr('workspace', 'list')
+        items = res.get('workspaces', res if isinstance(res, list) else [])
+        return {w.get('label') for w in items if isinstance(w, dict)}
+    except Exception:
+        return None
+
+
+def eff_label(w):
+    return w.get('label') or w.get('workspace_id')
+
+
+# Refuse to duplicate live workspaces: a restored agent would park at a
+# takeover prompt next to its still-live original. Checked up front so a
+# blocked restore creates nothing. Matches on label (ids are server-allocated
+# and meaningless across restarts).
+live = live_workspace_labels()
+if live is None:
+    if args.dry_run:
+        warnings.append('live session unreachable; active-workspace check skipped')
+    else:
+        sys.exit('herdr-restore: cannot reach live session to check for active '
+                 'workspaces; aborting (use --dry-run to plan offline)')
+elif not args.force:
+    collisions = sorted({eff_label(w) for w in workspaces} & live)
+    if collisions:
+        sys.exit('herdr-restore: refusing to restore still-active workspace(s): '
+                 + ', '.join(collisions)
+                 + '\nClose them first (herdr workspace close <id>) or pass --force.')
+
+
 new_ws_ids, new_tab_ids = [], []
 for w in workspaces:
     wtabs = tabs_by_ws.get(w.get('workspace_id'), [])
@@ -367,10 +403,8 @@ if warnings:
     print('Warnings:')
     for x in warnings:
         print(f"  - {x}")
-if not args.dry_run:
+if not args.dry_run and args.force:
     print()
-    print('Close the old workspace(s) BEFORE restoring if they are still live:')
-    print('  herdr workspace close <old-id>')
-    print('Restoring alongside a live original parks the resumed agent at a')
-    print('takeover prompt instead of resuming (same session, two holders).')
+    print('Note: restored with --force alongside live same-label workspace(s);')
+    print('resumed agents may sit at takeover prompts next to their originals.')
 PY
