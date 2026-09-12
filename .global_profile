@@ -63,6 +63,13 @@ fi
 # shellcheck source=/dev/null
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"
 
+# bffs: its Claude shim must precede nvm's real Claude binary. Unlike the
+# generic helper, this also moves an inherited later entry to the front.
+case "$PATH:" in
+  "$HOME/.bffs/bin:"*) ;;
+  *) PATH="$HOME/.bffs/bin:$PATH"; export PATH ;;
+esac
+
 # opencode: per-OS config
 if [ -z "${OPENCODE_CONFIG-}" ]; then
   case "$(uname -s)" in

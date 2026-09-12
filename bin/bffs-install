@@ -1,0 +1,53 @@
+#!/usr/bin/env bash
+# Install the pinned official BFFS release and its Claude shim. Safe to re-run.
+set -euo pipefail
+
+version="0.3.0"
+install_dir="$HOME/.bffs/bin"
+binary="$install_dir/bffs"
+
+case "$(uname -s):$(uname -m)" in
+  Darwin:x86_64) platform="darwin_amd64"; checksum="b2a33850443a0555cdf263c66b44932621ef706fe63272a27b0e57d5a0ea928a" ;;
+  Darwin:arm64) platform="darwin_arm64"; checksum="1606a6ad61f9524e776c90d4f88fa733e72331546162776e6552b166649678b2" ;;
+  Linux:x86_64) platform="linux_amd64"; checksum="8d506b08489c56e8e775332da259e139fb29456ccbec5dbf35d1b7f09681becb" ;;
+  Linux:aarch64|Linux:arm64) platform="linux_arm64"; checksum="eea6da3810eb58600a2c5b294c28a92b968a4819a5855b19cf9da92f111d1c29" ;;
+  *) echo "bffs-install: unsupported platform: $(uname -s) $(uname -m)" >&2; exit 1 ;;
+esac
+
+if [ ! -x "$binary" ] || ! "$binary" --version 2>/dev/null | grep -Fq "version $version"; then
+  echo "Installing bffs v$version ($platform)"
+  tmp="$(mktemp -d)"
+  trap 'rm -rf "$tmp"' EXIT
+  archive="bffs_${version}_${platform}.tar.gz"
+  curl -fsSL "https://github.com/jratienza65/bffs/releases/download/v${version}/${archive}" -o "$tmp/$archive"
+  if command -v sha256sum >/dev/null 2>&1; then
+    actual="$(sha256sum "$tmp/$archive" | cut -d ' ' -f 1)"
+  else
+    actual="$(shasum -a 256 "$tmp/$archive" | cut -d ' ' -f 1)"
+  fi
+  [ "$actual" = "$checksum" ] || { echo "bffs-install: checksum mismatch" >&2; exit 1; }
+  tar -xzf "$tmp/$archive" -C "$tmp"
+  mkdir -p "$install_dir"
+  install -m 0755 "$tmp/bffs" "$binary"
+else
+  echo "bffs v$version already installed"
+fi
+
+# OAuth accounts and credentials remain machine-local. The shim itself is
+# reproducible and must win over the real Claude binary in PATH.
+if [ ! -x "$HOME/.bffs/bin/claude" ] || [ "$(readlink "$HOME/.bffs/bin/claude" 2>/dev/null || true)" != "$binary" ]; then
+  # The stowed .zshenv makes the shim win in every zsh mode. Bootstrap can
+  # still run before the operator switches their login shell from bash to
+  # zsh, whose clean non-interactive mode has no startup file; --force keeps
+  # that transitional shell from blocking installation.
+  PATH="$install_dir:$PATH" "$binary" init --auto --force
+else
+  echo "bffs Claude shim already installed"
+fi
+
+# Remove the former `go install` copy once the checksummed release is active.
+legacy="$HOME/go/bin/bffs"
+if [ -x "$legacy" ] && command -v go >/dev/null 2>&1 \
+    && go version -m "$legacy" 2>/dev/null | grep -Fq $'\tpath\tgithub.com/jratienza65/bffs'; then
+  rm -f "$legacy"
+fi

@@ -20,6 +20,10 @@ gh auth login
 Other agents (opencode, codex, claude-code, auggie) — log in on first use
 or import keys via each tool's auth flow.
 
+BFFS is installed automatically, but its Claude accounts are machine-local.
+Add each account with `bffs login <name>`, then choose the default with
+`bffs switch <name>`. Verify `which claude` resolves to `~/.bffs/bin/claude`.
+
 ## Secrets
 - `~/.dotfiles/.env` — repo-local secrets (gitignored, auto-sourced)
 - `~/.local/bin/env` — per-machine exports (see `docs/local/README.md`)

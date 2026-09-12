@@ -53,6 +53,9 @@ step "Stow dotfiles (no folding)"
 mkdir -p "$HOME/.config" "$HOME/.pi/agent"
 stow --no-folding --dir="$repo_dir" --target="$HOME" .
 
+step "BFFS + Claude shim"
+"$repo_dir/bin/bffs-install"
+
 if command -v herdr >/dev/null 2>&1 && [ -x "$repo_dir/bin/herdr-config" ]; then
   step "Rendering herdr config (template + this machine's theme)"
   "$repo_dir/bin/herdr-config" || echo "herdr-config failed — see above" >&2

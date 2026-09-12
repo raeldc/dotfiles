@@ -71,6 +71,9 @@ if [[ "$os" == "Darwin" ]]; then
   "$repo_dir/bin/brew-install" --casks
 fi
 
+step "BFFS + Claude shim"
+"$repo_dir/bin/bffs-install"
+
 if command -v podman >/dev/null 2>&1; then
   step "Setting up Podman"
   "$repo_dir/bin/podman-setup" || echo "podman-setup failed — see above" >&2

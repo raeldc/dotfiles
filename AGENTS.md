@@ -35,6 +35,7 @@ Use this to jump straight to the right file for common instructions.
 - OpenCode: `.config/opencode/opencode.mac.json` / `opencode.linux.json` — tracked, platform-shared settings only. `opencode.json` (the global config opencode always loads, e.g. via `opencode mcp add`) is machine-local and git-untracked on purpose — MCP servers depend on locally-installed binaries, so keep them out of the repo.
 - Herdr: `.config/herdr/config.template.toml` — tracked **template** only. `bin/herdr-config` renders a machine-local `~/.config/herdr/config.toml` (git-untracked, not stowed) from it, preserving this machine's `[theme]` so in-app theme changes (`prefix+b s`) never churn the repo. `bin/sync`/`bin/bootstrap` re-render it. Do not stow the live config. Session state snapshots live in `.local/herdr/` — see Herdr State.
 - Pi: `.pi/agent/` (settings, keybindings, extensions; auth/sessions stay local)
+- BFFS: `bin/bffs-install` pins the official checksummed release and Claude shim; `.zshenv` keeps the shim first in every zsh mode. Accounts, OAuth credentials, and session stores are machine-local under BFFS's OS config directory and must not be committed.
 - Cursor: `cursor/Library/Application Support/Cursor/User/`
 - JetBrains GoLand: `jetbrains/Library/Application Support/JetBrains/GoLand2025.2/`
 - Antigravity: `antigravity/`
