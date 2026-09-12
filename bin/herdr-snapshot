@@ -16,18 +16,19 @@ command -v herdr >/dev/null 2>&1 || { echo "herdr-snapshot: herdr not on PATH" >
 
 mkdir -p "$out_dir"
 stamp="$(date -u +%Y%m%d-%H%M%S)"
+herdr_version="$(herdr --version 2>/dev/null || echo unknown)"
 raw="$(mktemp)"
 trap 'rm -f "$raw"' EXIT
 
 herdr api snapshot > "$raw"
 
-python3 - "$raw" "$out_dir/herdr-state-$stamp.json" "$out_dir/latest.json" <<'PY'
+python3 - "$raw" "$out_dir/herdr-state-$stamp.json" "$out_dir/latest.json" "$herdr_version" <<'PY'
 import datetime
 import json
 import subprocess
 import sys
 
-raw_path, stamped_path, latest_path = sys.argv[1:4]
+raw_path, stamped_path, latest_path, herdr_version = sys.argv[1:5]
 
 with open(raw_path, encoding='utf-8') as f:
     snapshot_doc = json.load(f)
@@ -52,6 +53,7 @@ for pane in panes:
 
 doc = {
     'taken_at_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    'herdr_version': herdr_version,
     'snapshot': snapshot_doc,
     'process_info_by_pane': processes,
 }
