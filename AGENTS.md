@@ -18,6 +18,7 @@ Dotfiles mirror `$HOME` via symlinks. Root shell entrypoints live at the repo ro
 - Editor/terminal configs: `.config/nvim/`, `.config/zed/`, `.config/zellij/`, `.config/alacritty/`, `.config/ghostty/`
 - Helper scripts: `bin/` (single-purpose scripts, kebab-case)
 - Activities: `activities/` (global activity manifest — see Activity System)
+- Herdr state: `.local/herdr/` (gitignored, never stowed — see Herdr State)
 
 ## Config Quick Map
 Use this to jump straight to the right file for common instructions.
@@ -31,13 +32,21 @@ Use this to jump straight to the right file for common instructions.
 - Alacritty: `.config/alacritty/`
 - Ghostty: `.config/ghostty/`
 - OpenCode: `.config/opencode/opencode.mac.json` / `opencode.linux.json` — tracked, platform-shared settings only. `opencode.json` (the global config opencode always loads, e.g. via `opencode mcp add`) is machine-local and git-untracked on purpose — MCP servers depend on locally-installed binaries, so keep them out of the repo.
-- Herdr: `.config/herdr/config.template.toml` — tracked **template** only. `bin/herdr-config` renders a machine-local `~/.config/herdr/config.toml` (git-untracked, not stowed) from it, preserving this machine's `[theme]` so in-app theme changes (`prefix+b s`) never churn the repo. `bin/sync`/`bin/bootstrap` re-render it. Do not stow the live config.
+- Herdr: `.config/herdr/config.template.toml` — tracked **template** only. `bin/herdr-config` renders a machine-local `~/.config/herdr/config.toml` (git-untracked, not stowed) from it, preserving this machine's `[theme]` so in-app theme changes (`prefix+b s`) never churn the repo. `bin/sync`/`bin/bootstrap` re-render it. Do not stow the live config. Session state snapshots live in `.local/herdr/` — see Herdr State.
 - Pi: `.pi/agent/` (settings, keybindings, extensions; auth/sessions stay local)
 - Cursor: `cursor/Library/Application Support/Cursor/User/`
 - JetBrains GoLand: `jetbrains/Library/Application Support/JetBrains/GoLand2025.2/`
 - Antigravity: `antigravity/`
 - Helper scripts: `bin/`
 - Local-only env: `~/.local/bin/env`
+
+## Herdr State
+"Save herdr state" means run `bin/herdr-snapshot`. It dumps `herdr api snapshot`
+(workspaces, tabs, and panes with labels, cwd, and agent status) plus per-pane
+`process-info` (foreground process, shell pid) into
+`.local/herdr/herdr-state-<UTC>.json` (and refreshes `latest.json`). That directory is
+gitignored and never stowed — machine-local state, not config. Must run inside a Herdr
+pane (`HERDR_ENV=1`).
 
 ## Platform Split (mac / linux / global)
 These dotfiles run on both macOS and Linux machines. Platform-dependent config must land in the right bucket:
