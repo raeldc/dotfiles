@@ -17,3 +17,7 @@ export PATH
 
 # Rust/Cargo environment
 [ -r "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+# proto
+export PROTO_HOME="$HOME/.proto";
+export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
