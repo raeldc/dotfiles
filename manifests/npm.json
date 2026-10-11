@@ -4,7 +4,10 @@
     "@anthropic-ai/claude-code",
     "@earendil-works/pi-coding-agent",
     "@plannotator/pi-extension",
+    "@playwright/mcp",
     "@tessl/cli",
+    "apidog-mcp-server",
+    "nx-mcp",
     "pi-teams"
   ]
 }
