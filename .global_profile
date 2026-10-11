@@ -19,6 +19,14 @@ fi
 
 export EDITOR=nvim
 
+# go: without -trimpath the build cache keys on each source dir, so every
+# agent worktree of the same repo stored its own copy (80G in 3 days).
+case " ${GOFLAGS:-} " in
+  *" -trimpath "*) ;;
+  *) GOFLAGS="${GOFLAGS:+$GOFLAGS }-trimpath" ;;
+esac
+export GOFLAGS
+
 # Paths
 dotfiles_path_prepend "$HOME/.dotfiles/bin"
 dotfiles_path_prepend "$HOME/.local/bin"
