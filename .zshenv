@@ -21,3 +21,7 @@ export PATH
 # proto
 export PROTO_HOME="$HOME/.proto";
 export PATH="$PROTO_HOME/shims:$PROTO_HOME/bin:$PATH";
+
+# mise shims: appended, not prepended, so they only provide tools nothing else
+# does (yq, opengrep, trivy, ...) and never shadow brew/proto/nvm go, node, just.
+path+=("$HOME/.local/share/mise/shims")
