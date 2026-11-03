@@ -57,6 +57,7 @@
       "libvidstab",
       "libvterm",
       "mbedtls",
+      "mise",
       "msgpack",
       "nats-io/nats-tools/nats",
       "nats-server",
