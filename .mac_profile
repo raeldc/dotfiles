@@ -28,6 +28,6 @@ export DOCKER_HOST="unix://${TMPDIR}podman/podman-machine-default-api.sock"
 
 # terraform completions (complete is a bash/zsh builtin)
 # shellcheck disable=SC3044
-if type complete >/dev/null 2>&1 && [ -x /opt/homebrew/bin/terraform ]; then
-  complete -o nospace -C /opt/homebrew/bin/terraform terraform
+if type complete >/dev/null 2>&1 && command -v terraform >/dev/null 2>&1; then
+  complete -o nospace -C "$(command -v terraform)" terraform
 fi

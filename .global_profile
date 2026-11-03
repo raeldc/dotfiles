@@ -34,6 +34,12 @@ dotfiles_path_prepend "$HOME/go/bin"
 dotfiles_path_prepend "$HOME/.opencode/bin"
 dotfiles_path_prepend "$HOME/.antigravity/antigravity/bin"
 
+# Zsh adds mise shims in .zshenv; add them as a fallback in other login shells.
+case ":$PATH:" in
+  *":$HOME/.local/share/mise/shims:"*) ;;
+  *) PATH="$PATH:$HOME/.local/share/mise/shims"; export PATH ;;
+esac
+
 # bun
 export BUN_INSTALL="$HOME/.bun"
 dotfiles_path_prepend "$BUN_INSTALL/bin"

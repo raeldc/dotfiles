@@ -71,6 +71,9 @@ if [[ "$os" == "Darwin" ]]; then
   "$repo_dir/bin/brew-install" --casks
 fi
 
+step "Installing mise-managed Terraform"
+mise -C "$HOME" install terraform
+
 step "BFFS + Claude shim"
 "$repo_dir/bin/bffs-install"
 

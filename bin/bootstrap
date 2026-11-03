@@ -53,6 +53,9 @@ step "Stow dotfiles (no folding)"
 mkdir -p "$HOME/.config" "$HOME/.pi/agent"
 stow --no-folding --dir="$repo_dir" --target="$HOME" .
 
+step "Installing mise-managed Terraform"
+mise -C "$HOME" install terraform
+
 step "BFFS + Claude shim"
 "$repo_dir/bin/bffs-install"
 
